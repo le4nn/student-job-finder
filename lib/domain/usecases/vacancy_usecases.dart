@@ -1,0 +1,1 @@
+// Vacancy use cases
