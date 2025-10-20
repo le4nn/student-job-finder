@@ -11,7 +11,7 @@ class RequestCodeUseCase {
     if (phoneNumber.isEmpty) {
       throw ArgumentError('Phone number cannot be empty');
     }
-
+    
     final cleanPhone = phoneNumber.replaceAll(RegExp(r'[^\d+]'), '');
     if (cleanPhone.length < 10) {
       throw ArgumentError('Invalid phone number format');

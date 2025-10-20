@@ -12,10 +12,10 @@ class UserModel extends User {
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
       id: json['id'] ?? json['userId'] ?? '',
-      email: json['email'] ?? '',
+      email: json['email'] ?? '', // Может быть пустым в новом API
       phone: json['phone'],
       role: UserRole.fromString(json['role'] ?? 'student'),
-      name: json['name'],
+      name: json['name'] ?? '',
     );
   }
 
@@ -30,12 +30,6 @@ class UserModel extends User {
   }
 
   User toEntity() {
-    return User(
-      id: id,
-      email: email,
-      phone: phone,
-      role: role,
-      name: name,
-    );
+    return User(id: id, email: email, phone: phone, role: role, name: name);
   }
 }

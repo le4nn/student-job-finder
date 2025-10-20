@@ -29,10 +29,10 @@ class AuthAuthenticated extends AuthState {
   List<Object?> get props => [session];
 }
 
-class AuthOtpSent extends AuthState {
+class AuthCodeSent extends AuthState {
   final String phoneNumber;
 
-  const AuthOtpSent(this.phoneNumber);
+  const AuthCodeSent(this.phoneNumber);
 
   @override
   List<Object?> get props => [phoneNumber];

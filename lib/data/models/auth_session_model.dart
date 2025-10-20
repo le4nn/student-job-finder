@@ -12,9 +12,10 @@ class AuthSessionModel extends AuthSession {
     return AuthSessionModel(
       token: json['token'] ?? '',
       user: UserModel.fromJson(json['user'] ?? json),
-      expiresAt: json['expiresAt'] != null 
-          ? DateTime.parse(json['expiresAt'])
-          : DateTime.now().add(const Duration(days: 30)),
+      expiresAt:
+          json['expiresAt'] != null
+              ? DateTime.fromMillisecondsSinceEpoch(json['expiresAt'] * 1000)
+              : DateTime.now().add(const Duration(days: 30)),
     );
   }
 
@@ -27,10 +28,6 @@ class AuthSessionModel extends AuthSession {
   }
 
   AuthSession toEntity() {
-    return AuthSession(
-      token: token,
-      user: user,
-      expiresAt: expiresAt,
-    );
+    return AuthSession(token: token, user: user, expiresAt: expiresAt);
   }
 }

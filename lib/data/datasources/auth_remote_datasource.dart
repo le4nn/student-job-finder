@@ -7,8 +7,8 @@ import '../../domain/entities/user.dart';
 import '../models/auth_session_model.dart';
 
 abstract class AuthRemoteDataSource {
-  Future<void> sendOtp(String phoneNumber);
-  Future<AuthSessionModel> verifyOtp(String phoneNumber, String code);
+  Future<void> requestCode(String phoneNumber);
+  Future<AuthSessionModel> verifyCode(String phoneNumber, String code);
   Future<AuthSessionModel> register({
     required String name,
     required String email,
@@ -25,23 +25,24 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   AuthRemoteDataSourceImpl(this._dio, this._logger);
 
   @override
-  Future<void> sendOtp(String phoneNumber) async {
+  Future<void> requestCode(String phoneNumber) async {
     try {
-      _logger.info('📡 API: Sending OTP request...');
-      
-      final response = await _dio.post(ApiConfig.sendOtp, data: {
-        'phone': phoneNumber,
-      });
+      _logger.info('📡 API: Requesting code...');
+
+      final response = await _dio.post(
+        ApiConfig.requestCode,
+        data: {'phone': phoneNumber},
+      );
 
       _logger.info('📡 API: Response ${response.statusCode}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        _logger.info('✅ OTP sent successfully');
+        _logger.info('✅ Code requested successfully');
       } else {
         throw Exception('Server error: ${response.statusCode}');
       }
     } on DioException catch (e) {
-      _handleDioError('Send OTP', e);
+      _handleDioError('Request Code', e);
       rethrow;
     } catch (e) {
       _logger.logError('API', 'Unexpected error: $e');
@@ -50,31 +51,31 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<AuthSessionModel> verifyOtp(String phoneNumber, String code) async {
+  Future<AuthSessionModel> verifyCode(String phoneNumber, String code) async {
     try {
-      _logger.info('📡 API: Verifying OTP...');
-      
-      final response = await _dio.post(ApiConfig.verifyOtp, data: {
-        'phone': phoneNumber,
-        'code': code,
-      });
+      _logger.info('📡 API: Verifying code...');
+
+      final response = await _dio.post(
+        ApiConfig.verifyCode,
+        data: {'phone': phoneNumber, 'code': code},
+      );
 
       _logger.info('📡 API: Response ${response.statusCode}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        _logger.info('✅ OTP verified successfully');
-        
+        _logger.info('✅ Code verified successfully');
+
         // Парсим реальный ответ от API
         final responseData = response.data;
         return AuthSessionModel.fromJson(responseData);
       } else {
-        throw Exception('Invalid OTP code');
+        throw Exception('Invalid code');
       }
     } on DioException catch (e) {
-      _handleDioError('Verify OTP', e);
+      _handleDioError('Verify Code', e);
       rethrow;
     } catch (e) {
-      _logger.logError('API', 'Verify OTP unexpected error: $e');
+      _logger.logError('API', 'Verify Code unexpected error: $e');
       rethrow;
     }
   }
@@ -88,13 +89,16 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }) async {
     try {
       _logger.info('📡 API: Registering user...');
-      
-      final response = await _dio.post(ApiConfig.register, data: {
-        'name': name,
-        'email': email,
-        'password': password,
-        'role': role.value,
-      });
+
+      final response = await _dio.post(
+        ApiConfig.register,
+        data: {
+          'name': name,
+          'email': email,
+          'password': password,
+          'role': role.value,
+        },
+      );
 
       _logger.info('📡 API: Response ${response.statusCode}');
 

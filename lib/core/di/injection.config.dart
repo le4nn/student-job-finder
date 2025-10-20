@@ -26,10 +26,10 @@ import 'package:student_job_finder/domain/repositories/auth_repository.dart'
     as _i102;
 import 'package:student_job_finder/domain/usecases/get_current_session_usecase.dart'
     as _i588;
-import 'package:student_job_finder/domain/usecases/send_otp_usecase.dart'
-    as _i542;
-import 'package:student_job_finder/domain/usecases/verify_otp_usecase.dart'
-    as _i502;
+import 'package:student_job_finder/domain/usecases/request_code_usecase.dart'
+    as _i622;
+import 'package:student_job_finder/domain/usecases/verify_code_usecase.dart'
+    as _i628;
 import 'package:student_job_finder/presentation/bloc/auth/auth_bloc.dart'
     as _i162;
 
@@ -68,16 +68,16 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i588.GetCurrentSessionUseCase>(
       () => _i588.GetCurrentSessionUseCase(gh<_i102.AuthRepository>()),
     );
-    gh.factory<_i542.SendOtpUseCase>(
-      () => _i542.SendOtpUseCase(gh<_i102.AuthRepository>()),
+    gh.factory<_i622.RequestCodeUseCase>(
+      () => _i622.RequestCodeUseCase(gh<_i102.AuthRepository>()),
     );
-    gh.factory<_i502.VerifyOtpUseCase>(
-      () => _i502.VerifyOtpUseCase(gh<_i102.AuthRepository>()),
+    gh.factory<_i628.VerifyCodeUseCase>(
+      () => _i628.VerifyCodeUseCase(gh<_i102.AuthRepository>()),
     );
     gh.factory<_i162.AuthBloc>(
       () => _i162.AuthBloc(
-        gh<_i542.SendOtpUseCase>(),
-        gh<_i502.VerifyOtpUseCase>(),
+        gh<_i622.RequestCodeUseCase>(),
+        gh<_i628.VerifyCodeUseCase>(),
         gh<_i588.GetCurrentSessionUseCase>(),
         gh<_i102.AuthRepository>(),
         gh<_i718.AppLogger>(),
