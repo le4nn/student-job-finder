@@ -12,15 +12,15 @@ class VerifyCodeUseCase {
     if (phoneNumber.isEmpty) {
       throw ArgumentError('Phone number cannot be empty');
     }
-
+    
     if (code.isEmpty || code.length != 6) {
       throw ArgumentError('Code must be 6 digits');
     }
 
     final session = await _authRepository.verifyCode(phoneNumber, code);
-
+    
     await _authRepository.saveSession(session);
-
+    
     return session;
   }
 }

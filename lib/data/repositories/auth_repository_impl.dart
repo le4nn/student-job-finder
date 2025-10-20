@@ -12,19 +12,16 @@ class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource _remoteDataSource;
   final AuthLocalDataSource _localDataSource;
 
-  AuthRepositoryImpl(
-    this._remoteDataSource,
-    this._localDataSource,
-  );
+  AuthRepositoryImpl(this._remoteDataSource, this._localDataSource);
 
   @override
-  Future<void> sendOtp(String phoneNumber) async {
-    return await _remoteDataSource.sendOtp(phoneNumber);
+  Future<void> requestCode(String phoneNumber) async {
+    return await _remoteDataSource.requestCode(phoneNumber);
   }
 
   @override
-  Future<AuthSession> verifyOtp(String phoneNumber, String code) async {
-    final sessionModel = await _remoteDataSource.verifyOtp(phoneNumber, code);
+  Future<AuthSession> verifyCode(String phoneNumber, String code) async {
+    final sessionModel = await _remoteDataSource.verifyCode(phoneNumber, code);
     return sessionModel.toEntity();
   }
 

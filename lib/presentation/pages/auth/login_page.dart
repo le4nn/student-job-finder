@@ -46,13 +46,13 @@ class _LoginPageState extends State<LoginPage> {
 
   void _sendOtp() async {
     final phone = _phoneController.text.trim();
-    
+
     if (phone.isEmpty || phone == '+7') {
       _logger.logUserInput('Phone', valid: false);
       _showError('Введите номер телефона');
       return;
     }
-    
+
     final cleanPhone = phone.formattedPhone;
     if (!cleanPhone.isValidPhone) {
       _logger.logUserInput('Phone format', valid: false);
@@ -67,15 +67,12 @@ class _LoginPageState extends State<LoginPage> {
     }
 
     _logger.logUserInput('Phone', valid: true);
-    context.read<AuthBloc>().add(AuthSendOtpRequested(phone));
+    context.read<AuthBloc>().add(AuthRequestCodeRequested(phone));
   }
 
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
-      ),
+      SnackBar(content: Text(message), backgroundColor: Colors.red),
     );
   }
 
@@ -88,7 +85,7 @@ class _LoginPageState extends State<LoginPage> {
           padding: const EdgeInsets.all(24.0),
           child: BlocListener<AuthBloc, AuthState>(
             listener: (context, state) {
-              if (state is AuthOtpSent) {
+              if (state is AuthCodeSent) {
                 _logger.logNavigation('OtpVerificationPage');
                 context.go(AppRoutes.otpVerification, extra: state.phoneNumber);
               } else if (state is AuthError) {
@@ -99,7 +96,7 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               children: [
                 const Spacer(flex: 2),
-                
+
                 // Logo and image
                 Container(
                   width: 200,
@@ -114,9 +111,9 @@ class _LoginPageState extends State<LoginPage> {
                     color: Colors.blue,
                   ),
                 ),
-                
+
                 const SizedBox(height: 32),
-                
+
                 // Title
                 const Text(
                   'JobFinder',
@@ -126,21 +123,18 @@ class _LoginPageState extends State<LoginPage> {
                     color: Colors.black,
                   ),
                 ),
-                
+
                 const SizedBox(height: 8),
-                
+
                 // Subtitle
                 const Text(
                   'Найди работу или стажировку мечты',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey,
-                  ),
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
                   textAlign: TextAlign.center,
                 ),
-                
+
                 const SizedBox(height: 48),
-                
+
                 // Phone number input
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -170,14 +164,14 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ],
                 ),
-                
+
                 const SizedBox(height: 32),
-                
+
                 // Get code button
                 BlocBuilder<AuthBloc, AuthState>(
                   builder: (context, state) {
                     final isLoading = state is AuthLoading;
-                    
+
                     return SizedBox(
                       width: double.infinity,
                       height: 56,
@@ -191,39 +185,37 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           elevation: 0,
                         ),
-                        child: isLoading
-                            ? const SizedBox(
-                                width: 24,
-                                height: 24,
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                  strokeWidth: 2,
+                        child:
+                            isLoading
+                                ? const SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                                : const Text(
+                                  'Получить код',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
-                              )
-                            : const Text(
-                                'Получить код',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
                       ),
                     );
                   },
                 ),
-                
+
                 const SizedBox(height: 16),
-                
+
                 // Terms text
                 const Text(
                   'Нажимая "Получить код", вы соглашаетесь с\nусловиями использования',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey,
-                  ),
+                  style: TextStyle(fontSize: 12, color: Colors.grey),
                   textAlign: TextAlign.center,
                 ),
-                
+
                 const Spacer(flex: 3),
               ],
             ),

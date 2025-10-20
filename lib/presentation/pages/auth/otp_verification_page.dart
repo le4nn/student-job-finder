@@ -9,11 +9,8 @@ import '../../bloc/auth/auth_state.dart';
 
 class OtpVerificationPage extends StatefulWidget {
   final String phoneNumber;
-  
-  const OtpVerificationPage({
-    super.key,
-    required this.phoneNumber,
-  });
+
+  const OtpVerificationPage({super.key, required this.phoneNumber});
 
   @override
   State<OtpVerificationPage> createState() => _OtpVerificationPageState();
@@ -41,7 +38,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
 
   void _onOtpChanged(String value) {
     final cleanValue = value.replaceAll(RegExp(r'[^0-9]'), '');
-    if (cleanValue.length <= 4) {
+    if (cleanValue.length <= 6) {
       setState(() {
         _otpCode = cleanValue;
       });
@@ -49,26 +46,28 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
       _otpController.selection = TextSelection.fromPosition(
         TextPosition(offset: cleanValue.length),
       );
-      
-      if (cleanValue.length == 4) {
-        _verifyOtp();
+
+      if (cleanValue.length == 6) {
+        _verifyCode();
       }
     }
   }
 
-  void _verifyOtp() {
-    if (_otpCode.length != 4) {
-      _showError('Введите 4-значный код');
+  void _verifyCode() {
+    if (_otpCode.length != 6) {
+      _showError('Введите 6-значный код');
       return;
     }
 
-    context.read<AuthBloc>().add(AuthVerifyOtpRequested(widget.phoneNumber, _otpCode));
+    context.read<AuthBloc>().add(
+      AuthVerifyCodeRequested(widget.phoneNumber, _otpCode),
+    );
   }
 
   void _resendCode() {
     if (!_canResendCode) return;
-    
-    context.read<AuthBloc>().add(AuthSendOtpRequested(widget.phoneNumber));
+
+    context.read<AuthBloc>().add(AuthRequestCodeRequested(widget.phoneNumber));
     _startResendTimer();
   }
 
@@ -77,7 +76,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
       _canResendCode = false;
       _resendTimer = 60;
     });
-    
+
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_resendTimer > 0) {
@@ -95,19 +94,13 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
 
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
-      ),
+      SnackBar(content: Text(message), backgroundColor: Colors.red),
     );
   }
 
   void _showSuccess(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.green,
-      ),
+      SnackBar(content: Text(message), backgroundColor: Colors.green),
     );
   }
 
@@ -125,14 +118,14 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
                 // TODO: Navigate to home page
               } else if (state is AuthError) {
                 _showError(state.message);
-              } else if (state is AuthOtpSent) {
+              } else if (state is AuthCodeSent) {
                 _showSuccess('Код отправлен повторно');
               }
             },
             child: Column(
               children: [
                 const SizedBox(height: 40),
-                
+
                 // Logo and image
                 Container(
                   width: 150,
@@ -147,9 +140,9 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
                     color: Colors.blue,
                   ),
                 ),
-                
+
                 const SizedBox(height: 32),
-                
+
                 const Text(
                   'JobFinder',
                   style: TextStyle(
@@ -158,20 +151,17 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
                     color: Colors.black,
                   ),
                 ),
-                
+
                 const SizedBox(height: 8),
-                
+
                 const Text(
                   'Найди работу или стажировку мечты',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey,
-                  ),
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
                   textAlign: TextAlign.center,
                 ),
-                
+
                 const SizedBox(height: 32),
-                
+
                 const Text(
                   'Подтверждение',
                   style: TextStyle(
@@ -180,20 +170,17 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
                     color: Colors.black,
                   ),
                 ),
-                
+
                 const SizedBox(height: 8),
 
                 Text(
                   'Введите код из SMS на номер\n${widget.phoneNumber}',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey,
-                  ),
+                  style: const TextStyle(fontSize: 16, color: Colors.grey),
                   textAlign: TextAlign.center,
                 ),
-                
+
                 const SizedBox(height: 24),
-                
+
                 // OTP input section
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -207,18 +194,19 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    
+
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: List.generate(4, (index) {
+                      children: List.generate(6, (index) {
                         return Container(
-                          width: 60,
-                          height: 60,
+                          width: 50,
+                          height: 50,
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: _otpCode.length > index 
-                                  ? Colors.blue 
-                                  : Colors.grey[300]!,
+                              color:
+                                  _otpCode.length > index
+                                      ? Colors.blue
+                                      : Colors.grey[300]!,
                               width: 2,
                             ),
                             borderRadius: BorderRadius.circular(12),
@@ -226,9 +214,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
                           ),
                           child: Center(
                             child: Text(
-                              _otpCode.length > index 
-                                  ? _otpCode[index] 
-                                  : '',
+                              _otpCode.length > index ? _otpCode[index] : '',
                               style: const TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
@@ -239,33 +225,34 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
                         );
                       }),
                     ),
-                    
+
                     Opacity(
                       opacity: 0.0,
                       child: TextField(
                         controller: _otpController,
                         keyboardType: TextInputType.number,
-                        maxLength: 4,
+                        maxLength: 6,
                         autofocus: true,
                         onChanged: _onOtpChanged,
                       ),
                     ),
                   ],
                 ),
-                
+
                 const SizedBox(height: 24),
-                
+
                 BlocBuilder<AuthBloc, AuthState>(
                   builder: (context, state) {
                     final isLoading = state is AuthLoading;
-                    
+
                     return SizedBox(
                       width: double.infinity,
                       height: 56,
                       child: ElevatedButton(
-                        onPressed: isLoading || _otpCode.length != 4 
-                            ? null 
-                            : _verifyOtp,
+                        onPressed:
+                            isLoading || _otpCode.length != 6
+                                ? null
+                                : _verifyCode,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF8B7CF6),
                           foregroundColor: Colors.white,
@@ -274,29 +261,29 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
                           ),
                           elevation: 0,
                         ),
-                        child: isLoading
-                            ? const SizedBox(
-                                width: 24,
-                                height: 24,
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                  strokeWidth: 2,
+                        child:
+                            isLoading
+                                ? const SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                                : const Text(
+                                  'Продолжить',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
-                              )
-                            : const Text(
-                                'Продолжить',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
                       ),
                     );
                   },
                 ),
-                
+
                 const SizedBox(height: 16),
-                
 
                 TextButton(
                   onPressed: () {
@@ -304,31 +291,29 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
                   },
                   child: const Text(
                     'Изменить номер телефона',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey,
-                    ),
+                    style: TextStyle(fontSize: 14, color: Colors.grey),
                   ),
                 ),
-                
+
                 const SizedBox(height: 8),
-                
+
                 // Resend code
                 TextButton(
                   onPressed: _canResendCode ? _resendCode : null,
                   child: Text(
-                    _canResendCode 
+                    _canResendCode
                         ? 'Отправить код повторно'
-                        : 'Отправить код повторно (${_resendTimer}с)',
+                        : 'Отправить код повторно ($_resendTimerс)',
                     style: TextStyle(
                       fontSize: 14,
-                      color: _canResendCode 
-                          ? const Color(0xFF8B7CF6) 
-                          : Colors.grey,
+                      color:
+                          _canResendCode
+                              ? const Color(0xFF8B7CF6)
+                              : Colors.grey,
                     ),
                   ),
                 ),
-                
+
                 const SizedBox(height: 60),
               ],
             ),
