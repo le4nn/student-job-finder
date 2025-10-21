@@ -37,9 +37,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(const AuthLoading());
 
     try {
-      await _requestCodeUseCase(event.phoneNumber);
+      await _requestCodeUseCase(event.phoneNumber, event.role);
       _logger.logAuth('Code sent', phone: event.phoneNumber);
-      emit(AuthCodeSent(event.phoneNumber));
+      emit(AuthCodeSent(event.phoneNumber, event.role));
     } catch (e) {
       _logger.logAuth('Request code failed', error: e.toString());
       emit(AuthError(e.toString()));

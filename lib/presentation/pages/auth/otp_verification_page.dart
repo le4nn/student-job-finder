@@ -9,8 +9,9 @@ import '../../bloc/auth/auth_state.dart';
 
 class OtpVerificationPage extends StatefulWidget {
   final String phoneNumber;
+  final String role;
 
-  const OtpVerificationPage({super.key, required this.phoneNumber});
+  const OtpVerificationPage({super.key, required this.phoneNumber, required this.role});
 
   @override
   State<OtpVerificationPage> createState() => _OtpVerificationPageState();
@@ -67,7 +68,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
   void _resendCode() {
     if (!_canResendCode) return;
 
-    context.read<AuthBloc>().add(AuthRequestCodeRequested(widget.phoneNumber));
+    context.read<AuthBloc>().add(AuthRequestCodeRequested(widget.phoneNumber, widget.role));
     _startResendTimer();
   }
 

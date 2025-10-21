@@ -16,8 +16,13 @@ class AppRoutes {
       GoRoute(
         path: otpVerification,
         builder: (context, state) {
-          final phoneNumber = state.extra as String;
-          return OtpVerificationPage(phoneNumber: phoneNumber);
+          final params = state.extra as Map<String, dynamic>;
+          final phoneNumber = params['phoneNumber'] as String;
+          final role = params['role'] as String;
+          return OtpVerificationPage(
+            phoneNumber: phoneNumber,
+            role: role,
+          );
         },
       ),
     ],
