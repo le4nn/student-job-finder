@@ -1,11 +1,18 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/constants/app_padding.dart';
+import '../../../core/constants/app_text_styles.dart';
+import '../../../core/constants/app_colors.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_event.dart';
 import '../../bloc/auth/auth_state.dart';
+import '../../widgets/auth/app_logo.dart';
+import '../../widgets/auth/otp_input_boxes.dart';
+import '../../widgets/common/primary_button.dart';
 
 class OtpVerificationPage extends StatefulWidget {
   final String phoneNumber;
@@ -107,11 +114,13 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: colorScheme.background,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
+          padding: EdgeInsets.all(AppPadding.lg),
           child: BlocListener<AuthBloc, AuthState>(
             listener: (context, state) {
               if (state is AuthAuthenticated) {
@@ -125,107 +134,63 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
             },
             child: Column(
               children: [
-                const SizedBox(height: 40),
+                SizedBox(height: AppPadding.xxl),
 
-                // Logo and image
-                Container(
-                  width: 150,
-                  height: 120,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    color: Colors.blue[50],
-                  ),
-                  child: const Icon(
-                    Icons.work_outline,
-                    size: 60,
-                    color: Colors.blue,
-                  ),
-                ),
+                AppLogo(size: 120.w),
 
-                const SizedBox(height: 32),
+                SizedBox(height: AppPadding.xl),
 
-                const Text(
+                Text(
                   'JobFinder',
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                  style: AppTextStyles.headlineMedium.copyWith(
+                    color: colorScheme.onBackground,
                   ),
                 ),
 
-                const SizedBox(height: 8),
+                SizedBox(height: AppPadding.sm),
 
-                const Text(
+                Text(
                   'Найди работу или стажировку мечты',
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                  style: AppTextStyles.bodyLarge.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
                   textAlign: TextAlign.center,
                 ),
 
-                const SizedBox(height: 32),
+                SizedBox(height: AppPadding.xl),
 
-                const Text(
+                Text(
                   'Подтверждение',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                  style: AppTextStyles.headlineSmall.copyWith(
+                    color: colorScheme.onBackground,
                   ),
                 ),
 
-                const SizedBox(height: 8),
+                SizedBox(height: AppPadding.sm),
 
                 Text(
                   'Введите код из SMS на номер\n${widget.phoneNumber}',
-                  style: const TextStyle(fontSize: 16, color: Colors.grey),
+                  style: AppTextStyles.bodyLarge.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
                   textAlign: TextAlign.center,
                 ),
 
-                const SizedBox(height: 24),
+                SizedBox(height: AppPadding.lg),
 
-                // OTP input section
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'Код подтверждения',
-                      style: TextStyle(
-                        fontSize: 16,
+                      style: AppTextStyles.bodyLarge.copyWith(
                         fontWeight: FontWeight.w500,
-                        color: Colors.black87,
+                        color: colorScheme.onSurface,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: AppPadding.sm),
 
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: List.generate(6, (index) {
-                        return Container(
-                          width: 50,
-                          height: 50,
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color:
-                                  _otpCode.length > index
-                                      ? Colors.blue
-                                      : Colors.grey[300]!,
-                              width: 2,
-                            ),
-                            borderRadius: BorderRadius.circular(12),
-                            color: Colors.grey[50],
-                          ),
-                          child: Center(
-                            child: Text(
-                              _otpCode.length > index ? _otpCode[index] : '',
-                              style: const TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ),
-                        );
-                      }),
-                    ),
+                    OtpInputBoxes(otpCode: _otpCode),
 
                     Opacity(
                       opacity: 0.0,
@@ -240,82 +205,48 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
                   ],
                 ),
 
-                const SizedBox(height: 24),
+                SizedBox(height: AppPadding.lg),
 
                 BlocBuilder<AuthBloc, AuthState>(
                   builder: (context, state) {
                     final isLoading = state is AuthLoading;
-
-                    return SizedBox(
-                      width: double.infinity,
-                      height: 56,
-                      child: ElevatedButton(
-                        onPressed:
-                            isLoading || _otpCode.length != 6
-                                ? null
-                                : _verifyCode,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF8B7CF6),
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          elevation: 0,
-                        ),
-                        child:
-                            isLoading
-                                ? const SizedBox(
-                                  width: 24,
-                                  height: 24,
-                                  child: CircularProgressIndicator(
-                                    color: Colors.white,
-                                    strokeWidth: 2,
-                                  ),
-                                )
-                                : const Text(
-                                  'Продолжить',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                      ),
+                    return PrimaryButton(
+                      text: 'Продолжить',
+                      onPressed: _otpCode.length == 6 ? _verifyCode : null,
+                      isLoading: isLoading,
                     );
                   },
                 ),
 
-                const SizedBox(height: 16),
+                SizedBox(height: AppPadding.md),
 
                 TextButton(
-                  onPressed: () {
-                    context.pop();
-                  },
-                  child: const Text(
+                  onPressed: () => context.pop(),
+                  child: Text(
                     'Изменить номер телефона',
-                    style: TextStyle(fontSize: 14, color: Colors.grey),
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
                   ),
                 ),
 
-                const SizedBox(height: 8),
+                SizedBox(height: AppPadding.sm),
 
-                // Resend code
                 TextButton(
                   onPressed: _canResendCode ? _resendCode : null,
                   child: Text(
                     _canResendCode
                         ? 'Отправить код повторно'
                         : 'Отправить код повторно ($_resendTimerс)',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color:
-                          _canResendCode
-                              ? const Color(0xFF8B7CF6)
-                              : Colors.grey,
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: _canResendCode
+                          ? colorScheme.primary
+                          : AppColors.textSecondary,
                     ),
                   ),
                 ),
 
-                const SizedBox(height: 60),
+                SizedBox(height: AppPadding.xxl),
               ],
             ),
           ),

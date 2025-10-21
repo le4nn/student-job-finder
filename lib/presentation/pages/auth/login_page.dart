@@ -1,14 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/di/injection.dart';
 import '../../../core/routes/app_routes.dart';
 import '../../../core/utils/app_logger.dart';
 import '../../../core/utils/network_checker.dart';
+import '../../../core/constants/app_padding.dart';
+import '../../../core/constants/app_radii.dart';
+import '../../../core/constants/app_text_styles.dart';
+import '../../../core/constants/app_colors.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_event.dart';
 import '../../bloc/auth/auth_state.dart';
+import '../../widgets/auth/app_logo.dart';
+import '../../widgets/auth/role_selector.dart';
+import '../../widgets/common/primary_button.dart';
 import '../../../utils/controllers/masked_text_controller.dart';
 import '../../../utils/extensions/string_extensions.dart';
 
@@ -79,11 +87,13 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: colorScheme.background,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(24.0),
+          padding: EdgeInsets.all(AppPadding.lg),
           child: BlocListener<AuthBloc, AuthState>(
             listener: (context, state) {
               if (state is AuthCodeSent) {
@@ -101,210 +111,84 @@ class _LoginPageState extends State<LoginPage> {
               children: [
                 const Spacer(flex: 2),
 
-                // Logo and image
-                Container(
-                  width: 200,
-                  height: 150,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    color: Colors.blue[50],
-                  ),
-                  child: const Icon(
-                    Icons.work_outline,
-                    size: 80,
-                    color: Colors.blue,
-                  ),
-                ),
+                const AppLogo(),
 
-                const SizedBox(height: 32),
+                SizedBox(height: AppPadding.xl),
 
-                // Title
-                const Text(
+                Text(
                   'JobFinder',
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                  style: AppTextStyles.headlineMedium.copyWith(
+                    color: colorScheme.onBackground,
                   ),
                 ),
 
-                const SizedBox(height: 8),
+                SizedBox(height: AppPadding.sm),
 
-                // Subtitle
-                const Text(
+                Text(
                   'Найди работу или стажировку мечты',
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                  style: AppTextStyles.bodyLarge.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
                   textAlign: TextAlign.center,
                 ),
 
-                const SizedBox(height: 32),
+                SizedBox(height: AppPadding.xl),
 
-                // Role selection
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey[100],
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () => setState(() => _selectedRole = 'student'),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            decoration: BoxDecoration(
-                              color: _selectedRole == 'student'
-                                  ? const Color(0xFF8B7CF6)
-                                  : Colors.transparent,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.school,
-                                  color: _selectedRole == 'student'
-                                      ? Colors.white
-                                      : Colors.grey[600],
-                                  size: 20,
-                                ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  'Студент',
-                                  style: TextStyle(
-                                    color: _selectedRole == 'student'
-                                        ? Colors.white
-                                        : Colors.grey[600],
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () => setState(() => _selectedRole = 'employer'),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            decoration: BoxDecoration(
-                              color: _selectedRole == 'employer'
-                                  ? const Color(0xFF8B7CF6)
-                                  : Colors.transparent,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.business,
-                                  color: _selectedRole == 'employer'
-                                      ? Colors.white
-                                      : Colors.grey[600],
-                                  size: 20,
-                                ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  'Работодатель',
-                                  style: TextStyle(
-                                    color: _selectedRole == 'employer'
-                                        ? Colors.white
-                                        : Colors.grey[600],
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                RoleSelector(
+                  selectedRole: _selectedRole,
+                  onRoleChanged: (role) => setState(() => _selectedRole = role),
                 ),
 
-                const SizedBox(height: 24),
+                SizedBox(height: AppPadding.lg),
 
-                // Phone number input
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'Номер телефона',
-                      style: TextStyle(
-                        fontSize: 16,
+                      style: AppTextStyles.bodyLarge.copyWith(
                         fontWeight: FontWeight.w500,
-                        color: Colors.black87,
+                        color: colorScheme.onSurface,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: AppPadding.sm),
                     TextField(
                       controller: _phoneController,
                       keyboardType: TextInputType.phone,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         hintText: '+ 7 (777) 777 77 77',
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(12)),
+                          borderRadius: BorderRadius.circular(AppRadii.md),
                         ),
                         contentPadding: EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 16,
+                          horizontal: AppPadding.md,
+                          vertical: AppPadding.md,
                         ),
                       ),
                     ),
                   ],
                 ),
 
-                const SizedBox(height: 32),
+                SizedBox(height: AppPadding.xl),
 
-                // Get code button
                 BlocBuilder<AuthBloc, AuthState>(
                   builder: (context, state) {
                     final isLoading = state is AuthLoading;
-
-                    return SizedBox(
-                      width: double.infinity,
-                      height: 56,
-                      child: ElevatedButton(
-                        onPressed: isLoading ? null : _sendOtp,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF8B7CF6),
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          elevation: 0,
-                        ),
-                        child:
-                            isLoading
-                                ? const SizedBox(
-                                  width: 24,
-                                  height: 24,
-                                  child: CircularProgressIndicator(
-                                    color: Colors.white,
-                                    strokeWidth: 2,
-                                  ),
-                                )
-                                : const Text(
-                                  'Получить код',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                      ),
+                    return PrimaryButton(
+                      text: 'Получить код',
+                      onPressed: _sendOtp,
+                      isLoading: isLoading,
                     );
                   },
                 ),
 
-                const SizedBox(height: 16),
+                SizedBox(height: AppPadding.md),
 
-                // Terms text
-                const Text(
+                Text(
                   'Нажимая "Получить код", вы соглашаетесь с\nусловиями использования',
-                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                  style: AppTextStyles.bodySmall.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
                   textAlign: TextAlign.center,
                 ),
 

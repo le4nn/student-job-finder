@@ -1,5 +1,5 @@
 class ApiConfig {
-  static const String baseUrl = 'http://localhost:8081/api/';
+  static const String baseUrl = 'http://localhost:8080/api/';
 
   static const String requestCode = 'request-code';
   static const String verifyCode = 'verify-code';
