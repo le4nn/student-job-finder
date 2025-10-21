@@ -1,13 +1,23 @@
 class ApiConfig {
-  static const String baseUrl = 'http://localhost:8080/api/';
+  static const String
+  baseUrl = 'http://localhost:8080';
 
-  static const String requestCode = 'request-code';
-  static const String verifyCode = 'verify-code';
-  static const String register = 'auth/register';
-  static const String refresh = 'auth/refresh';
-  static const String logout = 'auth/logout';
+  static const String registerPassword = '$baseUrl/auth/register-password';
+  static const String loginPassword = '$baseUrl/auth/login-password';
+  
+  static const String requestEmailCode = '$baseUrl/auth/request-email-code';
+  static const String verifyEmailCode = '$baseUrl/auth/verify-email-code';
+  
+  static const String requestPhoneCode = '$baseUrl/auth/request-phone-code';
+  static const String verifyPhoneCode = '$baseUrl/auth/verify-phone-code';
+  
+  static const String requestCode = '$baseUrl/api/request-code';
+  static const String verifyCode = '$baseUrl/api/verify-code';
+  static const String register = '$baseUrl/auth/register';
+  static const String refresh = '$baseUrl/auth/refresh';
+  static const String logout = '$baseUrl/auth/logout';
 
-  static const String health = 'health';
+  static const String health = '$baseUrl/api/health';
 
   static const Duration connectTimeout = Duration(seconds: 15);
   static const Duration receiveTimeout = Duration(seconds: 15);

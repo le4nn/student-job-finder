@@ -6,6 +6,7 @@ class User extends Equatable {
   final String? phone;
   final UserRole role;
   final String? name;
+  final bool isVerified;
 
   const User({
     required this.id,
@@ -13,10 +14,11 @@ class User extends Equatable {
     this.phone,
     required this.role,
     this.name,
+    this.isVerified = false,
   });
 
   @override
-  List<Object?> get props => [id, email, phone, role, name];
+  List<Object?> get props => [id, email, phone, role, name, isVerified];
 }
 
 enum UserRole {

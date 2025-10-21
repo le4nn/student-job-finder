@@ -7,8 +7,23 @@ import '../../domain/entities/user.dart';
 import '../models/auth_session_model.dart';
 
 abstract class AuthRemoteDataSource {
+  Future<AuthSessionModel> registerPassword({
+    String? email,
+    String? phone,
+    required String password,
+    required String role,
+  });
+  Future<AuthSessionModel> loginPassword({
+    required String identifier,
+    required String password,
+  });
+  
   Future<void> requestCode(String phoneNumber, String role);
   Future<AuthSessionModel> verifyCode(String phoneNumber, String code);
+  
+  Future<void> requestEmailCode(String email);
+  Future<AuthSessionModel> verifyEmailCode(String email, String code);
+  
   Future<AuthSessionModel> register({
     required String name,
     required String email,
@@ -65,7 +80,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       if (response.statusCode == 200 || response.statusCode == 201) {
         _logger.info('✅ Code verified successfully');
 
-        // Парсим реальный ответ от API
         final responseData = response.data;
         return AuthSessionModel.fromJson(responseData);
       } else {
@@ -76,6 +90,117 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       rethrow;
     } catch (e) {
       _logger.logError('API', 'Verify Code unexpected error: $e');
+      rethrow;
+    }
+  }
+
+  @override
+  Future<AuthSessionModel> registerPassword({
+    String? email,
+    String? phone,
+    required String password,
+    required String role,
+  }) async {
+    try {
+      _logger.info('📡 API: Registering with password...');
+
+      final response = await _dio.post(
+        ApiConfig.registerPassword,
+        data: {
+          if (email != null) 'email': email,
+          if (phone != null) 'phone': phone,
+          'password': password,
+          'role': role,
+        },
+      );
+
+      _logger.info('📡 API: Response ${response.statusCode}');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        _logger.info('✅ Registered successfully');
+        return AuthSessionModel.fromJson(response.data);
+      } else {
+        throw Exception('Registration failed');
+      }
+    } on DioException catch (e) {
+      _handleDioError('Register Password', e);
+      rethrow;
+    }
+  }
+
+  @override
+  Future<AuthSessionModel> loginPassword({
+    required String identifier,
+    required String password,
+  }) async {
+    try {
+      _logger.info('📡 API: Logging in with password...');
+
+      final response = await _dio.post(
+        ApiConfig.loginPassword,
+        data: {
+          'identifier': identifier,
+          'password': password,
+        },
+      );
+
+      _logger.info('📡 API: Response ${response.statusCode}');
+
+      if (response.statusCode == 200) {
+        _logger.info('✅ Logged in successfully');
+        return AuthSessionModel.fromJson(response.data);
+      } else {
+        throw Exception('Login failed');
+      }
+    } on DioException catch (e) {
+      _handleDioError('Login Password', e);
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> requestEmailCode(String email) async {
+    try {
+      _logger.info('📡 API: Requesting email code...');
+
+      final response = await _dio.post(
+        ApiConfig.requestEmailCode,
+        data: {'email': email},
+      );
+
+      _logger.info('📡 API: Response ${response.statusCode}');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        _logger.info('✅ Email code requested successfully');
+      } else {
+        throw Exception('Server error: ${response.statusCode}');
+      }
+    } on DioException catch (e) {
+      _handleDioError('Request Email Code', e);
+      rethrow;
+    }
+  }
+
+  @override
+  Future<AuthSessionModel> verifyEmailCode(String email, String code) async {
+    try {
+      _logger.info('📡 API: Verifying email code...');
+
+      final response = await _dio.post(
+        ApiConfig.verifyEmailCode,
+        data: {'email': email, 'code': code},
+      );
+
+      _logger.info('📡 API: Response ${response.statusCode}');
+
+      if (response.statusCode == 200) {
+        _logger.info('✅ Email code verified successfully');
+        return AuthSessionModel.fromJson(response.data);
+      } else {
+        throw Exception('Invalid code');
+      }
+    } on DioException catch (e) {
+      _handleDioError('Verify Email Code', e);
       rethrow;
     }
   }

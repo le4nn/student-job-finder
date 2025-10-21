@@ -31,4 +31,11 @@ class AppColors {
   static Color get grey800 => Colors.grey[800]!;
   
   static Color get blue50 => Colors.blue[50]!;
+  
+  static const Color white = Colors.white;
+  static const Color transparent = Colors.transparent;
+  static const Color blue = Colors.blue;
+  
+  static const Color snackbarError = Colors.red;
+  static const Color snackbarSuccess = Colors.green;
 }

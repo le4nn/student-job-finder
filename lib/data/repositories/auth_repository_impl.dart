@@ -15,6 +15,60 @@ class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl(this._remoteDataSource, this._localDataSource);
 
   @override
+  Future<AuthSession> registerPassword({
+    String? email,
+    String? phone,
+    required String password,
+    required String role,
+  }) async {
+    final sessionModel = await _remoteDataSource.registerPassword(
+      email: email,
+      phone: phone,
+      password: password,
+      role: role,
+    );
+    await _localDataSource.saveSession(sessionModel);
+    return sessionModel.toEntity();
+  }
+
+  @override
+  Future<AuthSession> loginPassword({
+    required String identifier,
+    required String password,
+  }) async {
+    final sessionModel = await _remoteDataSource.loginPassword(
+      identifier: identifier,
+      password: password,
+    );
+    await _localDataSource.saveSession(sessionModel);
+    return sessionModel.toEntity();
+  }
+
+  @override
+  Future<void> requestPhoneCode(String phoneNumber, String role) async {
+    return await _remoteDataSource.requestCode(phoneNumber, role);
+  }
+
+  @override
+  Future<AuthSession> verifyPhoneCode(String phoneNumber, String code) async {
+    final sessionModel = await _remoteDataSource.verifyCode(phoneNumber, code);
+    await _localDataSource.saveSession(sessionModel);
+    return sessionModel.toEntity();
+  }
+
+  @override
+  Future<void> requestEmailCode(String email) async {
+    return await _remoteDataSource.requestEmailCode(email);
+  }
+
+  @override
+  Future<AuthSession> verifyEmailCode(String email, String code) async {
+    final sessionModel = await _remoteDataSource.verifyEmailCode(email, code);
+    await _localDataSource.saveSession(sessionModel);
+    return sessionModel.toEntity();
+  }
+
+  @override
   Future<void> requestCode(String phoneNumber, String role) async {
     return await _remoteDataSource.requestCode(phoneNumber, role);
   }
@@ -22,6 +76,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<AuthSession> verifyCode(String phoneNumber, String code) async {
     final sessionModel = await _remoteDataSource.verifyCode(phoneNumber, code);
+    await _localDataSource.saveSession(sessionModel);
     return sessionModel.toEntity();
   }
 
@@ -38,6 +93,7 @@ class AuthRepositoryImpl implements AuthRepository {
       password: password,
       role: role,
     );
+    await _localDataSource.saveSession(sessionModel);
     return sessionModel.toEntity();
   }
 

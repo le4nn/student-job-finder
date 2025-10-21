@@ -4,6 +4,10 @@ import 'package:injectable/injectable.dart';
 import '../../../core/utils/app_logger.dart';
 import '../../../domain/usecases/request_code_usecase.dart';
 import '../../../domain/usecases/verify_code_usecase.dart';
+import '../../../domain/usecases/register_password_usecase.dart';
+import '../../../domain/usecases/login_password_usecase.dart';
+import '../../../domain/usecases/request_email_code_usecase.dart';
+import '../../../domain/usecases/verify_email_code_usecase.dart';
 import '../../../domain/usecases/get_current_session_usecase.dart';
 import '../../../domain/repositories/auth_repository.dart';
 import 'auth_event.dart';
@@ -13,6 +17,10 @@ import 'auth_state.dart';
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final RequestCodeUseCase _requestCodeUseCase;
   final VerifyCodeUseCase _verifyCodeUseCase;
+  final RegisterPasswordUseCase _registerPasswordUseCase;
+  final LoginPasswordUseCase _loginPasswordUseCase;
+  final RequestEmailCodeUseCase _requestEmailCodeUseCase;
+  final VerifyEmailCodeUseCase _verifyEmailCodeUseCase;
   final GetCurrentSessionUseCase _getCurrentSessionUseCase;
   final AuthRepository _authRepository;
   final AppLogger _logger;
@@ -20,14 +28,22 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc(
     this._requestCodeUseCase,
     this._verifyCodeUseCase,
+    this._registerPasswordUseCase,
+    this._loginPasswordUseCase,
+    this._requestEmailCodeUseCase,
+    this._verifyEmailCodeUseCase,
     this._getCurrentSessionUseCase,
     this._authRepository,
     this._logger,
   ) : super(const AuthInitial()) {
+    on<AuthSessionCheckRequested>(_onSessionCheckRequested);
     on<AuthRequestCodeRequested>(_onRequestCodeRequested);
     on<AuthVerifyCodeRequested>(_onVerifyCodeRequested);
+    on<AuthRegisterPasswordRequested>(_onRegisterPasswordRequested);
+    on<AuthLoginPasswordRequested>(_onLoginPasswordRequested);
+    on<AuthRequestEmailCodeRequested>(_onRequestEmailCodeRequested);
+    on<AuthVerifyEmailCodeRequested>(_onVerifyEmailCodeRequested);
     on<AuthLogoutRequested>(_onLogoutRequested);
-    on<AuthSessionCheckRequested>(_onSessionCheckRequested);
   }
 
   Future<void> _onRequestCodeRequested(
@@ -74,6 +90,78 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(const AuthUnauthenticated());
     } catch (e) {
       _logger.logAuth('Logout failed', error: e.toString());
+      emit(AuthError(e.toString()));
+    }
+  }
+
+  Future<void> _onRegisterPasswordRequested(
+    AuthRegisterPasswordRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(const AuthLoading());
+
+    try {
+      final session = await _registerPasswordUseCase(
+        email: event.email,
+        phone: event.phone,
+        password: event.password,
+        role: event.role,
+      );
+      _logger.logAuth('Register success');
+      emit(AuthAuthenticated(session));
+    } catch (e) {
+      _logger.logAuth('Register failed', error: e.toString());
+      emit(AuthError(e.toString()));
+    }
+  }
+
+  Future<void> _onLoginPasswordRequested(
+    AuthLoginPasswordRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(const AuthLoading());
+
+    try {
+      final session = await _loginPasswordUseCase(
+        identifier: event.identifier,
+        password: event.password,
+      );
+      _logger.logAuth('Login success');
+      emit(AuthAuthenticated(session));
+    } catch (e) {
+      _logger.logAuth('Login failed', error: e.toString());
+      emit(AuthError(e.toString()));
+    }
+  }
+
+  Future<void> _onRequestEmailCodeRequested(
+    AuthRequestEmailCodeRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(const AuthLoading());
+
+    try {
+      await _requestEmailCodeUseCase(event.email);
+      _logger.logAuth('Email code sent', phone: event.email);
+      emit(AuthCodeSent(event.email, 'email'));
+    } catch (e) {
+      _logger.logAuth('Request email code failed', error: e.toString());
+      emit(AuthError(e.toString()));
+    }
+  }
+
+  Future<void> _onVerifyEmailCodeRequested(
+    AuthVerifyEmailCodeRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(const AuthLoading());
+
+    try {
+      final session = await _verifyEmailCodeUseCase(event.email, event.code);
+      _logger.logAuth('Email verified success');
+      emit(AuthAuthenticated(session));
+    } catch (e) {
+      _logger.logAuth('Email verification failed', error: e.toString());
       emit(AuthError(e.toString()));
     }
   }

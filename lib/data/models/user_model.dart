@@ -7,15 +7,17 @@ class UserModel extends User {
     super.phone,
     required super.role,
     super.name,
+    super.isVerified,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      id: json['id'] ?? json['userId'] ?? '',
-      email: json['email'] ?? '', // Может быть пустым в новом API
+      id: json['id'] ?? '',
+      email: json['email'] ?? '',
       phone: json['phone'],
       role: UserRole.fromString(json['role'] ?? 'student'),
-      name: json['name'] ?? '',
+      name: json['name'],
+      isVerified: json['is_verified'] ?? false,
     );
   }
 
@@ -26,6 +28,7 @@ class UserModel extends User {
       'phone': phone,
       'role': role.value,
       'name': name,
+      'is_verified': isVerified,
     };
   }
 

@@ -15,15 +15,15 @@ class AppLogo extends StatelessWidget {
     
     return Container(
       width: logoSize,
-      height: (logoSize * 0.75).h,
+      height: (logoSize * AppSizes.logoHeightRatio).h,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(AppRadii.lg),
         color: AppColors.blue50,
       ),
       child: Icon(
         Icons.work_outline,
-        size: logoSize * 0.5,
-        color: Colors.blue,
+        size: logoSize * AppSizes.iconSizeRatio,
+        color: AppColors.blue,
       ),
     );
   }

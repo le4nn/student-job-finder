@@ -73,7 +73,7 @@ class _RoleButton extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.symmetric(vertical: AppPadding.md),
         decoration: BoxDecoration(
-          color: isSelected ? colorScheme.primary : Colors.transparent,
+          color: isSelected ? colorScheme.primary : AppColors.transparent,
           borderRadius: BorderRadius.circular(AppRadii.md),
         ),
         child: Row(
@@ -81,14 +81,14 @@ class _RoleButton extends StatelessWidget {
           children: [
             Icon(
               icon,
-              color: isSelected ? Colors.white : AppColors.grey600,
+              color: isSelected ? AppColors.white : AppColors.grey600,
               size: AppSizes.iconSm,
             ),
             SizedBox(width: AppPadding.sm),
             Text(
               label,
               style: AppTextStyles.bodyLarge.copyWith(
-                color: isSelected ? Colors.white : AppColors.grey600,
+                color: isSelected ? AppColors.white : AppColors.grey600,
                 fontWeight: FontWeight.w600,
               ),
             ),

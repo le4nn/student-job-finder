@@ -28,4 +28,15 @@ class AppSizes {
   static double get logoSmall => 80.w;
   static double get logoMedium => 120.w;
   static double get logoLarge => 150.w;
+  
+  static double get loadingIndicatorSm => 24.w;
+  
+  static double get otpBoxSize => 50.w;
+  
+  static double get borderWidth => 2.0;
+  
+  static double get opacityHidden => 0.0;
+  
+  static double get logoHeightRatio => 0.75;
+  static double get iconSizeRatio => 0.5;
 }

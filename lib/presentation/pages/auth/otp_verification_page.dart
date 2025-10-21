@@ -1,12 +1,14 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/constants/app_padding.dart';
-import '../../../core/constants/app_text_styles.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_durations.dart';
+import '../../../core/constants/app_padding.dart';
+import '../../../core/constants/app_sizes.dart';
+import '../../../core/constants/app_text_styles.dart';
+import '../../../core/constants/app_values.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_event.dart';
 import '../../bloc/auth/auth_state.dart';
@@ -28,7 +30,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
   final TextEditingController _otpController = TextEditingController();
   String _otpCode = '';
   bool _canResendCode = false;
-  int _resendTimer = 60;
+  int _resendTimer = AppDurations.resendTimerSeconds;
   Timer? _timer;
 
   @override
@@ -46,7 +48,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
 
   void _onOtpChanged(String value) {
     final cleanValue = value.replaceAll(RegExp(r'[^0-9]'), '');
-    if (cleanValue.length <= 6) {
+    if (cleanValue.length <= AppValues.otpLength) {
       setState(() {
         _otpCode = cleanValue;
       });
@@ -55,14 +57,14 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
         TextPosition(offset: cleanValue.length),
       );
 
-      if (cleanValue.length == 6) {
+      if (cleanValue.length == AppValues.otpLength) {
         _verifyCode();
       }
     }
   }
 
   void _verifyCode() {
-    if (_otpCode.length != 6) {
+    if (_otpCode.length != AppValues.otpLength) {
       _showError('Введите 6-значный код');
       return;
     }
@@ -82,11 +84,11 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
   void _startResendTimer() {
     setState(() {
       _canResendCode = false;
-      _resendTimer = 60;
+      _resendTimer = AppDurations.resendTimerSeconds;
     });
 
     _timer?.cancel();
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(AppDurations.timerTick, (timer) {
       if (_resendTimer > 0) {
         setState(() {
           _resendTimer--;
@@ -102,13 +104,13 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
 
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: Colors.red),
+      SnackBar(content: Text(message), backgroundColor: AppColors.snackbarError),
     );
   }
 
   void _showSuccess(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: Colors.green),
+      SnackBar(content: Text(message), backgroundColor: AppColors.snackbarSuccess),
     );
   }
 
@@ -136,7 +138,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
               children: [
                 SizedBox(height: AppPadding.xxl),
 
-                AppLogo(size: 120.w),
+                AppLogo(size: AppSizes.logoMedium),
 
                 SizedBox(height: AppPadding.xl),
 
@@ -193,11 +195,11 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
                     OtpInputBoxes(otpCode: _otpCode),
 
                     Opacity(
-                      opacity: 0.0,
+                      opacity: AppSizes.opacityHidden,
                       child: TextField(
                         controller: _otpController,
                         keyboardType: TextInputType.number,
-                        maxLength: 6,
+                        maxLength: AppValues.maxOtpFieldLength,
                         autofocus: true,
                         onChanged: _onOtpChanged,
                       ),
@@ -212,7 +214,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
                     final isLoading = state is AuthLoading;
                     return PrimaryButton(
                       text: 'Продолжить',
-                      onPressed: _otpCode.length == 6 ? _verifyCode : null,
+                      onPressed: _otpCode.length == AppValues.otpLength ? _verifyCode : null,
                       isLoading: isLoading,
                     );
                   },

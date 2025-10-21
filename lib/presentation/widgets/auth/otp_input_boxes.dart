@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_radii.dart';
+import '../../../core/constants/app_sizes.dart';
 import '../../../core/constants/app_text_styles.dart';
+import '../../../core/constants/app_values.dart';
 
 class OtpInputBoxes extends StatelessWidget {
   final String otpCode;
@@ -11,7 +12,7 @@ class OtpInputBoxes extends StatelessWidget {
   const OtpInputBoxes({
     super.key,
     required this.otpCode,
-    this.length = 6,
+    this.length = AppValues.otpLength,
   });
 
   @override
@@ -24,12 +25,12 @@ class OtpInputBoxes extends StatelessWidget {
         final hasValue = otpCode.length > index;
         
         return Container(
-          width: 50.w,
-          height: 50.h,
+          width: AppSizes.otpBoxSize,
+          height: AppSizes.otpBoxSize,
           decoration: BoxDecoration(
             border: Border.all(
               color: hasValue ? colorScheme.primary : AppColors.grey300,
-              width: 2,
+              width: AppSizes.borderWidth,
             ),
             borderRadius: BorderRadius.circular(AppRadii.md),
             color: AppColors.grey50,

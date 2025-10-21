@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_radii.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../core/constants/app_text_styles.dart';
@@ -29,7 +29,7 @@ class PrimaryButton extends StatelessWidget {
         onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: colorScheme.primary,
-          foregroundColor: Colors.white,
+          foregroundColor: AppColors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppRadii.md),
           ),
@@ -37,16 +37,16 @@ class PrimaryButton extends StatelessWidget {
         ),
         child: isLoading
             ? SizedBox(
-                width: 24.w,
-                height: 24.w,
-                child: const CircularProgressIndicator(
-                  color: Colors.white,
-                  strokeWidth: 2,
+                width: AppSizes.loadingIndicatorSm,
+                height: AppSizes.loadingIndicatorSm,
+                child: CircularProgressIndicator(
+                  color: AppColors.white,
+                  strokeWidth: AppSizes.borderWidth,
                 ),
               )
             : Text(
                 text,
-                style: AppTextStyles.button.copyWith(color: Colors.white),
+                style: AppTextStyles.button.copyWith(color: AppColors.white),
               ),
       ),
     );

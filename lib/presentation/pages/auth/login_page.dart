@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/di/injection.dart';
 import '../../../core/routes/app_routes.dart';
 import '../../../core/utils/app_logger.dart';
 import '../../../core/utils/network_checker.dart';
+import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_padding.dart';
 import '../../../core/constants/app_radii.dart';
+import '../../../core/constants/app_sizes.dart';
 import '../../../core/constants/app_text_styles.dart';
-import '../../../core/constants/app_colors.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_event.dart';
 import '../../bloc/auth/auth_state.dart';
@@ -81,7 +81,7 @@ class _LoginPageState extends State<LoginPage> {
 
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: Colors.red),
+      SnackBar(content: Text(message), backgroundColor: AppColors.snackbarError),
     );
   }
 
@@ -190,6 +190,38 @@ class _LoginPageState extends State<LoginPage> {
                     color: AppColors.textSecondary,
                   ),
                   textAlign: TextAlign.center,
+                ),
+
+                SizedBox(height: AppPadding.md),
+
+                Row(
+                  children: [
+                    Expanded(child: Divider(color: AppColors.divider)),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: AppPadding.md),
+                      child: Text(
+                        'или',
+                        style: AppTextStyles.bodySmall.copyWith(
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    ),
+                    Expanded(child: Divider(color: AppColors.divider)),
+                  ],
+                ),
+
+                SizedBox(height: AppPadding.md),
+
+                OutlinedButton.icon(
+                  onPressed: () => context.go('/login-password'),
+                  icon: const Icon(Icons.lock_outline),
+                  label: const Text('Войти через пароль'),
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: Size(double.infinity, AppSizes.buttonHeightLg),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(AppRadii.md),
+                    ),
+                  ),
                 ),
 
                 const Spacer(flex: 3),
