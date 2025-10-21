@@ -7,9 +7,13 @@ class RequestCodeUseCase {
 
   RequestCodeUseCase(this._authRepository);
 
-  Future<void> call(String phoneNumber) async {
+  Future<void> call(String phoneNumber, String role) async {
     if (phoneNumber.isEmpty) {
       throw ArgumentError('Phone number cannot be empty');
+    }
+    
+    if (role.isEmpty || (role != 'student' && role != 'employer')) {
+      throw ArgumentError('Invalid role: must be student or employer');
     }
     
     final cleanPhone = phoneNumber.replaceAll(RegExp(r'[^\d+]'), '');
@@ -17,6 +21,6 @@ class RequestCodeUseCase {
       throw ArgumentError('Invalid phone number format');
     }
 
-    return await _authRepository.requestCode(phoneNumber);
+    return await _authRepository.requestCode(phoneNumber, role);
   }
 }

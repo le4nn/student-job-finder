@@ -2,7 +2,7 @@ import '../entities/auth_session.dart';
 import '../entities/user.dart';
 
 abstract class AuthRepository {
-  Future<void> requestCode(String phoneNumber);
+  Future<void> requestCode(String phoneNumber, String role);
   Future<AuthSession> verifyCode(String phoneNumber, String code);
   Future<AuthSession> register({
     required String name,

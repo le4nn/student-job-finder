@@ -23,6 +23,7 @@ class _LoginPageState extends State<LoginPage> {
   final MaskedTextController _phoneController = MaskedTextController.phoneMask;
   final AppLogger _logger = getIt<AppLogger>();
   final NetworkChecker _networkChecker = getIt<NetworkChecker>();
+  String _selectedRole = 'student';
 
   @override
   void initState() {
@@ -67,7 +68,7 @@ class _LoginPageState extends State<LoginPage> {
     }
 
     _logger.logUserInput('Phone', valid: true);
-    context.read<AuthBloc>().add(AuthRequestCodeRequested(phone));
+    context.read<AuthBloc>().add(AuthRequestCodeRequested(phone, _selectedRole));
   }
 
   void _showError(String message) {
@@ -87,7 +88,10 @@ class _LoginPageState extends State<LoginPage> {
             listener: (context, state) {
               if (state is AuthCodeSent) {
                 _logger.logNavigation('OtpVerificationPage');
-                context.go(AppRoutes.otpVerification, extra: state.phoneNumber);
+                context.go(AppRoutes.otpVerification, extra: {
+                  'phoneNumber': state.phoneNumber,
+                  'role': state.role,
+                });
               } else if (state is AuthError) {
                 _logger.logError('Login', state.message);
                 _showError(state.message);
@@ -133,7 +137,95 @@ class _LoginPageState extends State<LoginPage> {
                   textAlign: TextAlign.center,
                 ),
 
-                const SizedBox(height: 48),
+                const SizedBox(height: 32),
+
+                // Role selection
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () => setState(() => _selectedRole = 'student'),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            decoration: BoxDecoration(
+                              color: _selectedRole == 'student'
+                                  ? const Color(0xFF8B7CF6)
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.school,
+                                  color: _selectedRole == 'student'
+                                      ? Colors.white
+                                      : Colors.grey[600],
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'Студент',
+                                  style: TextStyle(
+                                    color: _selectedRole == 'student'
+                                        ? Colors.white
+                                        : Colors.grey[600],
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () => setState(() => _selectedRole = 'employer'),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            decoration: BoxDecoration(
+                              color: _selectedRole == 'employer'
+                                  ? const Color(0xFF8B7CF6)
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.business,
+                                  color: _selectedRole == 'employer'
+                                      ? Colors.white
+                                      : Colors.grey[600],
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'Работодатель',
+                                  style: TextStyle(
+                                    color: _selectedRole == 'employer'
+                                        ? Colors.white
+                                        : Colors.grey[600],
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 24),
 
                 // Phone number input
                 Column(

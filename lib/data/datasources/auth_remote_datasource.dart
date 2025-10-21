@@ -7,7 +7,7 @@ import '../../domain/entities/user.dart';
 import '../models/auth_session_model.dart';
 
 abstract class AuthRemoteDataSource {
-  Future<void> requestCode(String phoneNumber);
+  Future<void> requestCode(String phoneNumber, String role);
   Future<AuthSessionModel> verifyCode(String phoneNumber, String code);
   Future<AuthSessionModel> register({
     required String name,
@@ -25,13 +25,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   AuthRemoteDataSourceImpl(this._dio, this._logger);
 
   @override
-  Future<void> requestCode(String phoneNumber) async {
+  Future<void> requestCode(String phoneNumber, String role) async {
     try {
       _logger.info('📡 API: Requesting code...');
 
       final response = await _dio.post(
         ApiConfig.requestCode,
-        data: {'phone': phoneNumber},
+        data: {'phone': phoneNumber, 'role': role},
       );
 
       _logger.info('📡 API: Response ${response.statusCode}');

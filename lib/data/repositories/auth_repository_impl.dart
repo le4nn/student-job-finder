@@ -15,8 +15,8 @@ class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl(this._remoteDataSource, this._localDataSource);
 
   @override
-  Future<void> requestCode(String phoneNumber) async {
-    return await _remoteDataSource.requestCode(phoneNumber);
+  Future<void> requestCode(String phoneNumber, String role) async {
+    return await _remoteDataSource.requestCode(phoneNumber, role);
   }
 
   @override

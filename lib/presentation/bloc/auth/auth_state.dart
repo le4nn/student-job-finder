@@ -31,11 +31,12 @@ class AuthAuthenticated extends AuthState {
 
 class AuthCodeSent extends AuthState {
   final String phoneNumber;
+  final String role;
 
-  const AuthCodeSent(this.phoneNumber);
+  const AuthCodeSent(this.phoneNumber, this.role);
 
   @override
-  List<Object?> get props => [phoneNumber];
+  List<Object?> get props => [phoneNumber, role];
 }
 
 class AuthError extends AuthState {

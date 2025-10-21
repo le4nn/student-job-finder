@@ -9,11 +9,12 @@ abstract class AuthEvent extends Equatable {
 
 class AuthRequestCodeRequested extends AuthEvent {
   final String phoneNumber;
+  final String role;
 
-  const AuthRequestCodeRequested(this.phoneNumber);
+  const AuthRequestCodeRequested(this.phoneNumber, this.role);
 
   @override
-  List<Object?> get props => [phoneNumber];
+  List<Object?> get props => [phoneNumber, role];
 }
 
 class AuthVerifyCodeRequested extends AuthEvent {
