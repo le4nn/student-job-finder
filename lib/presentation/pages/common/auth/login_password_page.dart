@@ -1,67 +1,55 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_padding.dart';
-import '../../../core/constants/app_radii.dart';
-import '../../../core/constants/app_text_styles.dart';
-import '../../../core/constants/app_values.dart';
-import '../../bloc/auth/auth_bloc.dart';
-import '../../bloc/auth/auth_event.dart';
-import '../../bloc/auth/auth_state.dart';
-import '../../widgets/auth/app_logo.dart';
-import '../../widgets/auth/role_selector.dart';
-import '../../widgets/common/primary_button.dart';
+import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_padding.dart';
+import '../../../../core/constants/app_radii.dart';
+import '../../../../core/constants/app_sizes.dart';
+import '../../../../core/constants/app_text_styles.dart';
+import '../../../../core/routes/app_routes.dart';
+import '../../../bloc/common/auth/auth_bloc.dart';
+import '../../../bloc/common/auth/auth_event.dart';
+import '../../../bloc/common/auth/auth_state.dart';
+import '../../../widgets/common/auth/app_logo.dart';
+import '../../../widgets/common/primary_button.dart';
 
-class RegisterPage extends StatefulWidget {
-  const RegisterPage({super.key});
+class LoginPasswordPage extends StatefulWidget {
+  const LoginPasswordPage({super.key});
 
   @override
-  State<RegisterPage> createState() => _RegisterPageState();
+  State<LoginPasswordPage> createState() => _LoginPasswordPageState();
 }
 
-class _RegisterPageState extends State<RegisterPage> {
-  final TextEditingController _emailController = TextEditingController();
+class _LoginPasswordPageState extends State<LoginPasswordPage> {
+  final TextEditingController _identifierController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
-  String _selectedRole = 'student';
   bool _obscurePassword = true;
-  bool _obscureConfirm = true;
 
   @override
   void dispose() {
-    _emailController.dispose();
+    _identifierController.dispose();
     _passwordController.dispose();
-    _confirmPasswordController.dispose();
     super.dispose();
   }
 
-  void _register() {
-    final email = _emailController.text.trim();
+  void _login() {
+    final identifier = _identifierController.text.trim();
     final password = _passwordController.text;
-    final confirmPassword = _confirmPasswordController.text;
 
-    if (email.isEmpty) {
-      _showError('Введите email');
+    if (identifier.isEmpty) {
+      _showError('Введите email или телефон');
       return;
     }
 
-    if (password.isEmpty || password.length < AppValues.minPasswordLength) {
-      _showError('Пароль должен содержать минимум ${AppValues.minPasswordLength} символов');
+    if (password.isEmpty) {
+      _showError('Введите пароль');
       return;
     }
 
-    if (password != confirmPassword) {
-      _showError('Пароли не совпадают');
-      return;
-    }
-
-    context.read<AuthBloc>().add(AuthRegisterPasswordRequested(
-      email: email,
+    context.read<AuthBloc>().add(AuthLoginPasswordRequested(
+      identifier: identifier,
       password: password,
-      role: _selectedRole,
     ));
   }
 
@@ -83,7 +71,7 @@ class _RegisterPageState extends State<RegisterPage> {
           child: BlocListener<AuthBloc, AuthState>(
             listener: (context, state) {
               if (state is AuthAuthenticated) {
-                context.go('/home');
+                context.go(AppRoutes.employerHome);
               } else if (state is AuthError) {
                 _showError(state.message);
               }
@@ -91,14 +79,14 @@ class _RegisterPageState extends State<RegisterPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                SizedBox(height: AppPadding.xxl),
+                SizedBox(height: AppPadding.xxl * 2),
 
                 const Center(child: AppLogo()),
 
                 SizedBox(height: AppPadding.xl),
 
                 Text(
-                  'Регистрация',
+                  'Вход',
                   style: AppTextStyles.headlineMedium.copyWith(
                     color: colorScheme.onSurface,
                   ),
@@ -108,29 +96,22 @@ class _RegisterPageState extends State<RegisterPage> {
                 SizedBox(height: AppPadding.sm),
 
                 Text(
-                  'Создайте аккаунт для продолжения',
+                  'Войдите с email или телефоном',
                   style: AppTextStyles.bodyLarge.copyWith(
                     color: AppColors.textSecondary,
                   ),
                   textAlign: TextAlign.center,
                 ),
 
-                SizedBox(height: AppPadding.xl),
-
-                RoleSelector(
-                  selectedRole: _selectedRole,
-                  onRoleChanged: (role) => setState(() => _selectedRole = role),
-                ),
-
-                SizedBox(height: AppPadding.lg),
+                SizedBox(height: AppPadding.xxl),
 
                 TextField(
-                  controller: _emailController,
+                  controller: _identifierController,
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
-                    labelText: 'Email',
-                    hintText: 'your@email.com',
-                    prefixIcon: const Icon(Icons.email_outlined),
+                    labelText: 'Email или телефон',
+                    hintText: 'your@email.com или +7...',
+                    prefixIcon: const Icon(Icons.person_outline),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(AppRadii.md),
                     ),
@@ -144,7 +125,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   obscureText: _obscurePassword,
                   decoration: InputDecoration(
                     labelText: 'Пароль',
-                    hintText: 'Минимум 6 символов',
+                    hintText: 'Введите пароль',
                     prefixIcon: const Icon(Icons.lock_outline),
                     suffixIcon: IconButton(
                       icon: Icon(
@@ -160,37 +141,14 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                 ),
 
-                SizedBox(height: AppPadding.md),
-
-                TextField(
-                  controller: _confirmPasswordController,
-                  obscureText: _obscureConfirm,
-                  decoration: InputDecoration(
-                    labelText: 'Подтвердите пароль',
-                    hintText: 'Повторите пароль',
-                    prefixIcon: const Icon(Icons.lock_outline),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscureConfirm ? Icons.visibility : Icons.visibility_off,
-                      ),
-                      onPressed: () {
-                        setState(() => _obscureConfirm = !_obscureConfirm);
-                      },
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(AppRadii.md),
-                    ),
-                  ),
-                ),
-
                 SizedBox(height: AppPadding.xl),
 
                 BlocBuilder<AuthBloc, AuthState>(
                   builder: (context, state) {
                     final isLoading = state is AuthLoading;
                     return PrimaryButton(
-                      text: 'Зарегистрироваться',
-                      onPressed: _register,
+                      text: 'Войти',
+                      onPressed: _login,
                       isLoading: isLoading,
                     );
                   },
@@ -202,15 +160,15 @@ class _RegisterPageState extends State<RegisterPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Уже есть аккаунт? ',
+                      'Нет аккаунта? ',
                       style: AppTextStyles.bodyMedium.copyWith(
                         color: AppColors.textSecondary,
                       ),
                     ),
                     TextButton(
-                      onPressed: () => context.go('/login-password'),
+                      onPressed: () => context.go('/register'),
                       child: Text(
-                        'Войти',
+                        'Регистрация',
                         style: AppTextStyles.bodyMedium.copyWith(
                           color: colorScheme.primary,
                           fontWeight: FontWeight.w600,
@@ -218,6 +176,38 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                     ),
                   ],
+                ),
+
+                SizedBox(height: AppPadding.md),
+
+                Row(
+                  children: [
+                    Expanded(child: Divider(color: AppColors.divider)),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: AppPadding.md),
+                      child: Text(
+                        'или',
+                        style: AppTextStyles.bodySmall.copyWith(
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    ),
+                    Expanded(child: Divider(color: AppColors.divider)),
+                  ],
+                ),
+
+                SizedBox(height: AppPadding.md),
+
+                OutlinedButton.icon(
+                  onPressed: () => context.go('/login'),
+                  icon: const Icon(Icons.phone_android),
+                  label: const Text('Войти через код'),
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: Size(double.infinity, AppSizes.buttonHeightLg),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(AppRadii.md),
+                    ),
+                  ),
                 ),
               ],
             ),

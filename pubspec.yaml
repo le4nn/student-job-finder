@@ -37,6 +37,7 @@ dependencies:
   
   # Network
   dio: ^5.3.2
+  http: ^1.1.0
   
   # State Management
   flutter_bloc: ^9.1.1

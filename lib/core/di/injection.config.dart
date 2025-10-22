@@ -42,8 +42,8 @@ import 'package:student_job_finder/domain/usecases/verify_email_code_usecase.dar
     as _i459;
 import 'package:student_job_finder/domain/usecases/verify_otp_usecase.dart'
     as _i502;
-import 'package:student_job_finder/presentation/bloc/auth/auth_bloc.dart'
-    as _i162;
+
+import '../../presentation/bloc/common/auth/auth_bloc.dart' as _i162;
 
 extension GetItInjectableX on _i174.GetIt {
   // initializes the registration of main-scope dependencies inside of GetIt
