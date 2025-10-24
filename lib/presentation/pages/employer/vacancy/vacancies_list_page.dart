@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/widgets/sg_snackbar.dart';
+import '../../../../core/utils/exception_handler.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_padding.dart';
@@ -35,33 +37,58 @@ class _VacanciesListPageState extends State<VacanciesListPage> {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
-        child: Column(
-          children: [
-            _buildHeader(),
-            _buildFilterTabs(),
-            Expanded(
-              child: BlocBuilder<VacancyBloc, VacancyState>(
-                builder: (context, state) {
-                  if (state is VacancyLoading) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  if (state is VacancyError) {
-                    return Center(
-                      child: Text(
-                        state.message,
-                        style: AppTextStyles.body,
-                      ),
-                    );
-                  }
-                  if (state is VacanciesLoaded) {
-                    final list = _getFilteredVacancies(state.vacancies);
-                    return _buildVacanciesList(list);
-                  }
-                  return const SizedBox();
-                },
+        child: BlocListener<VacancyBloc, VacancyState>(
+          listener: (context, state) {
+            if (state is VacancyError) {
+              snackBarBuilder(SnackBarOptions(
+                type: SnackBarType.error,
+                exception: ExceptionHandler(state.message),
+              ));
+            } else if (state is VacancyCreated) {
+              snackBarBuilder(SnackBarOptions(
+                type: SnackBarType.success,
+                title: 'Вакансия создана',
+              ));
+            } else if (state is VacancyUpdated) {
+              snackBarBuilder(SnackBarOptions(
+                type: SnackBarType.success,
+                title: 'Вакансия обновлена',
+              ));
+            } else if (state is VacancyDeleted) {
+              snackBarBuilder(SnackBarOptions(
+                type: SnackBarType.success,
+                title: 'Вакансия удалена',
+              ));
+            }
+          },
+          child: Column(
+            children: [
+              _buildHeader(),
+              _buildFilterTabs(),
+              Expanded(
+                child: BlocBuilder<VacancyBloc, VacancyState>(
+                  builder: (context, state) {
+                    if (state is VacancyLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    if (state is VacancyError) {
+                      return Center(
+                        child: Text(
+                          state.message,
+                          style: AppTextStyles.body,
+                        ),
+                      );
+                    }
+                    if (state is VacanciesLoaded) {
+                      final list = _getFilteredVacancies(state.vacancies);
+                      return _buildVacanciesList(list);
+                    }
+                    return const SizedBox();
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -238,9 +265,10 @@ class _VacanciesListPageState extends State<VacanciesListPage> {
             onPressed: () {
               Navigator.pop(context);
               // TODO: Добавить удаление когда настроим Provider
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Удаление будет доступно после настройки Provider')),
-              );
+              snackBarBuilder(SnackBarOptions(
+                type: SnackBarType.warning,
+                title: 'Удаление будет доступно после настройки Provider',
+              ));
             },
             child: const Text(
               'Удалить',

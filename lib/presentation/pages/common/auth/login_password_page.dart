@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/widgets/sg_snackbar.dart';
+import '../../../../core/utils/exception_handler.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_padding.dart';
@@ -54,9 +56,10 @@ class _LoginPasswordPageState extends State<LoginPasswordPage> {
   }
 
   void _showError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: AppColors.snackbarError),
-    );
+    snackBarBuilder(SnackBarOptions(
+      type: SnackBarType.error,
+      exception: ExceptionHandler(message),
+    ));
   }
 
   @override

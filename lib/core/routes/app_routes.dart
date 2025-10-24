@@ -1,6 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
+import 'package:student_job_finder/core/services/navigation_service.dart';
 import '../../presentation/pages/common/auth/login_page.dart';
 import '../../presentation/pages/common/auth/login_password_page.dart';
 import '../../presentation/pages/common/auth/register_page.dart';
@@ -24,6 +25,7 @@ class AppRoutes {
   static const String createVacancy = '/create-vacancy';
   
   static final GoRouter router = GoRouter(
+    navigatorKey: NavigationService.navigatorKey,
     initialLocation: loginPassword,
     routes: [
       GoRoute(
