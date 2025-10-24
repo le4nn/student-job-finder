@@ -4,6 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/widgets/sg_snackbar.dart';
 import '../../../../core/utils/exception_handler.dart';
+import '../../../bloc/common/auth/auth_bloc.dart';
+import '../../../bloc/common/auth/auth_state.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_padding.dart';
@@ -29,7 +31,18 @@ class _VacanciesListPageState extends State<VacanciesListPage> {
   @override
   void initState() {
     super.initState();
-    context.read<VacancyBloc>().add(LoadVacanciesEvent());
+    _loadEmployerVacancies();
+  }
+
+  void _loadEmployerVacancies() {
+    final authState = context.read<AuthBloc>().state;
+    if (authState is AuthAuthenticated) {
+      final userId = authState.session.user.id;
+      context.read<VacancyBloc>().add(LoadEmployerVacanciesEvent(userId));
+    } else {
+      // Fallback to loading all vacancies if not authenticated
+      context.read<VacancyBloc>().add(LoadVacanciesEvent());
+    }
   }
 
   @override

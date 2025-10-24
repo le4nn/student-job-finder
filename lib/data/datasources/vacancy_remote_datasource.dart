@@ -110,8 +110,11 @@ class VacancyRemoteDataSourceImpl implements VacancyRemoteDataSource {
 
   @override
   Future<List<VacancyModel>> getEmployerVacancies(String employerId) async {
+    final uri = Uri.parse('${ApiConfig.baseUrl}/api/vacancies')
+        .replace(queryParameters: {'employer_id': employerId});
+    
     final response = await client.get(
-      Uri.parse('${ApiConfig.baseUrl}/api/employers/$employerId/vacancies'),
+      uri,
       headers: ApiConfig.defaultHeaders,
     ).timeout(ApiConfig.connectTimeout);
 

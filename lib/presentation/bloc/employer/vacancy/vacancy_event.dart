@@ -8,6 +8,12 @@ class LoadVacanciesEvent extends VacancyEvent {
   LoadVacanciesEvent({this.status});
 }
 
+class LoadEmployerVacanciesEvent extends VacancyEvent {
+  final String employerId;
+  
+  LoadEmployerVacanciesEvent(this.employerId);
+}
+
 class CreateVacancyEvent extends VacancyEvent {
   final VacancyEntity vacancy;
   

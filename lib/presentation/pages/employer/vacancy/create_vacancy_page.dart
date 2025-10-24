@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import '../../../bloc/common/auth/auth_bloc.dart';
+import '../../../bloc/common/auth/auth_state.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_padding.dart';
@@ -494,6 +496,16 @@ class _CreateVacancyPageState extends State<CreateVacancyPage> {
         return;
       }
 
+      // Get employerId from auth session
+      final authState = context.read<AuthBloc>().state;
+      String employerId = 'unknown';
+      String companyName = 'Компания';
+      
+      if (authState is AuthAuthenticated) {
+        employerId = authState.session.user.id;
+        companyName = authState.session.user.name ?? 'Компания';
+      }
+
       final now = DateTime.now();
       final vacancy = VacancyEntity(
         title: _titleController.text.trim(),
@@ -512,8 +524,8 @@ class _CreateVacancyPageState extends State<CreateVacancyPage> {
         requirements: _requirementsController.text.trim(),
         benefits: _benefitsController.text.trim(),
         status: 'active',
-        employerId: 'employer_id_placeholder', // TODO: Get from auth
-        companyName: 'Яндекс', // TODO: Get from employer profile
+        employerId: employerId,
+        companyName: companyName,
         createdAt: now,
         updatedAt: now,
       );

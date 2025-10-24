@@ -10,6 +10,8 @@ class VacancyBloc extends Bloc<VacancyEvent, VacancyState> {
   final DeleteVacancyUseCase deleteVacancyUseCase;
   final GetEmployerVacanciesUseCase getEmployerVacanciesUseCase;
 
+  String? _currentEmployerId;
+
   VacancyBloc({
     required this.getVacanciesUseCase,
     required this.createVacancyUseCase,
@@ -18,6 +20,7 @@ class VacancyBloc extends Bloc<VacancyEvent, VacancyState> {
     required this.getEmployerVacanciesUseCase,
   }) : super(VacancyInitial()) {
     on<LoadVacanciesEvent>(_onLoadVacancies);
+    on<LoadEmployerVacanciesEvent>(_onLoadEmployerVacancies);
     on<CreateVacancyEvent>(_onCreateVacancy);
     on<UpdateVacancyEvent>(_onUpdateVacancy);
     on<DeleteVacancyEvent>(_onDeleteVacancy);
@@ -37,6 +40,20 @@ class VacancyBloc extends Bloc<VacancyEvent, VacancyState> {
     }
   }
 
+  Future<void> _onLoadEmployerVacancies(
+    LoadEmployerVacanciesEvent event,
+    Emitter<VacancyState> emit,
+  ) async {
+    try {
+      emit(VacancyLoading());
+      _currentEmployerId = event.employerId;
+      final vacancies = await getEmployerVacanciesUseCase(event.employerId);
+      emit(VacanciesLoaded(vacancies));
+    } catch (e) {
+      emit(VacancyError(e.toString()));
+    }
+  }
+
   Future<void> _onCreateVacancy(
     CreateVacancyEvent event,
     Emitter<VacancyState> emit,
@@ -47,8 +64,13 @@ class VacancyBloc extends Bloc<VacancyEvent, VacancyState> {
       emit(VacancyCreated(vacancy));
       
       // Reload vacancies after creation
-      final vacancies = await getVacanciesUseCase();
-      emit(VacanciesLoaded(vacancies));
+      if (_currentEmployerId != null) {
+        final vacancies = await getEmployerVacanciesUseCase(_currentEmployerId!);
+        emit(VacanciesLoaded(vacancies));
+      } else {
+        final vacancies = await getVacanciesUseCase();
+        emit(VacanciesLoaded(vacancies));
+      }
     } catch (e) {
       emit(VacancyError(e.toString()));
     }
@@ -64,8 +86,13 @@ class VacancyBloc extends Bloc<VacancyEvent, VacancyState> {
       emit(VacancyUpdated(vacancy));
       
       // Reload vacancies after update
-      final vacancies = await getVacanciesUseCase();
-      emit(VacanciesLoaded(vacancies));
+      if (_currentEmployerId != null) {
+        final vacancies = await getEmployerVacanciesUseCase(_currentEmployerId!);
+        emit(VacanciesLoaded(vacancies));
+      } else {
+        final vacancies = await getVacanciesUseCase();
+        emit(VacanciesLoaded(vacancies));
+      }
     } catch (e) {
       emit(VacancyError(e.toString()));
     }
@@ -81,8 +108,13 @@ class VacancyBloc extends Bloc<VacancyEvent, VacancyState> {
       emit(VacancyDeleted(event.id));
       
       // Reload vacancies after deletion
-      final vacancies = await getVacanciesUseCase();
-      emit(VacanciesLoaded(vacancies));
+      if (_currentEmployerId != null) {
+        final vacancies = await getEmployerVacanciesUseCase(_currentEmployerId!);
+        emit(VacanciesLoaded(vacancies));
+      } else {
+        final vacancies = await getVacanciesUseCase();
+        emit(VacanciesLoaded(vacancies));
+      }
     } catch (e) {
       emit(VacancyError(e.toString()));
     }
