@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:student_job_finder/presentation/bloc/common/auth/auth_bloc.dart';
 import 'package:student_job_finder/presentation/bloc/common/auth/auth_event.dart';
 
@@ -14,6 +16,9 @@ void main() async {
   await configureDependencies();
   final logger = getIt<AppLogger>();
   logger.info('🚀 App started');
+  await initializeDateFormatting('ru_RU', null);
+  await initializeDateFormatting('ru', null);
+  Intl.defaultLocale = 'ru_RU';
   
   runApp(const MyApp());
 }
