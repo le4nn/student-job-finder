@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/routes/app_routes.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_durations.dart';
@@ -127,7 +128,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
             listener: (context, state) {
               if (state is AuthAuthenticated) {
                 _showSuccess('Код подтвержден успешно!');
-                // TODO: Navigate to home page
+                context.go(AppRoutes.employerHome);
               } else if (state is AuthError) {
                 _showError(state.message);
               } else if (state is AuthCodeSent) {
