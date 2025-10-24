@@ -81,4 +81,35 @@ class AppTextStyles {
         fontSize: 16.sp,
         fontWeight: FontWeight.w600,
       );
+  
+  // Alias shortcuts
+  static TextStyle get h1 => TextStyle(
+        fontSize: 28.sp,
+        fontWeight: FontWeight.bold,
+      );
+  
+  static TextStyle get h2 => TextStyle(
+        fontSize: 24.sp,
+        fontWeight: FontWeight.bold,
+      );
+  
+  static TextStyle get h3 => TextStyle(
+        fontSize: 20.sp,
+        fontWeight: FontWeight.w600,
+      );
+  
+  static TextStyle get h4 => TextStyle(
+        fontSize: 18.sp,
+        fontWeight: FontWeight.w600,
+      );
+  
+  static TextStyle get body => TextStyle(
+        fontSize: 16.sp,
+        fontWeight: FontWeight.normal,
+      );
+  
+  static TextStyle get caption => TextStyle(
+        fontSize: 14.sp,
+        fontWeight: FontWeight.normal,
+      );
 }

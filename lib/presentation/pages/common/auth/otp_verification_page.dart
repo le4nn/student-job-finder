@@ -3,18 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_durations.dart';
-import '../../../core/constants/app_padding.dart';
-import '../../../core/constants/app_sizes.dart';
-import '../../../core/constants/app_text_styles.dart';
-import '../../../core/constants/app_values.dart';
-import '../../bloc/auth/auth_bloc.dart';
-import '../../bloc/auth/auth_event.dart';
-import '../../bloc/auth/auth_state.dart';
-import '../../widgets/auth/app_logo.dart';
-import '../../widgets/auth/otp_input_boxes.dart';
-import '../../widgets/common/primary_button.dart';
+import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_durations.dart';
+import '../../../../core/constants/app_padding.dart';
+import '../../../../core/constants/app_sizes.dart';
+import '../../../../core/constants/app_text_styles.dart';
+import '../../../../core/constants/app_values.dart';
+import '../../../bloc/common/auth/auth_bloc.dart';
+import '../../../bloc/common/auth/auth_event.dart';
+import '../../../bloc/common/auth/auth_state.dart';
+import '../../../widgets/common/auth/app_logo.dart';
+import '../../../widgets/common/auth/otp_input_boxes.dart';
+import '../../../widgets/common/primary_button.dart';
 
 class OtpVerificationPage extends StatefulWidget {
   final String phoneNumber;

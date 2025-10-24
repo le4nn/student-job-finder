@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:student_job_finder/utils/extensions/string_extensions.dart';
 
-import '../../../core/di/injection.dart';
-import '../../../core/routes/app_routes.dart';
-import '../../../core/utils/app_logger.dart';
-import '../../../core/utils/network_checker.dart';
-import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_padding.dart';
-import '../../../core/constants/app_radii.dart';
-import '../../../core/constants/app_sizes.dart';
-import '../../../core/constants/app_text_styles.dart';
-import '../../bloc/auth/auth_bloc.dart';
-import '../../bloc/auth/auth_event.dart';
-import '../../bloc/auth/auth_state.dart';
-import '../../widgets/auth/app_logo.dart';
-import '../../widgets/auth/role_selector.dart';
-import '../../widgets/common/primary_button.dart';
-import '../../../utils/controllers/masked_text_controller.dart';
-import '../../../utils/extensions/string_extensions.dart';
+import '../../../../core/di/injection.dart';
+import '../../../../core/routes/app_routes.dart';
+import '../../../../core/utils/app_logger.dart';
+import '../../../../core/utils/network_checker.dart';
+import '../../../../utils/controllers/masked_text_controller.dart';
+import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_padding.dart';
+import '../../../../core/constants/app_radii.dart';
+import '../../../../core/constants/app_sizes.dart';
+import '../../../../core/constants/app_text_styles.dart';
+import '../../../bloc/common/auth/auth_bloc.dart';
+import '../../../bloc/common/auth/auth_event.dart';
+import '../../../bloc/common/auth/auth_state.dart';
+import '../../../widgets/common/auth/app_logo.dart';
+import '../../../widgets/common/auth/role_selector.dart';
+import '../../../widgets/common/primary_button.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});

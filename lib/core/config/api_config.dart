@@ -1,6 +1,6 @@
 class ApiConfig {
   static const String
-  baseUrl = 'http://localhost:8080';
+  baseUrl = 'http://localhost:8081';
 
   static const String registerPassword = '$baseUrl/auth/register-password';
   static const String loginPassword = '$baseUrl/auth/login-password';

@@ -1,15 +1,15 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../../core/utils/app_logger.dart';
-import '../../../domain/usecases/request_code_usecase.dart';
-import '../../../domain/usecases/verify_code_usecase.dart';
-import '../../../domain/usecases/register_password_usecase.dart';
-import '../../../domain/usecases/login_password_usecase.dart';
-import '../../../domain/usecases/request_email_code_usecase.dart';
-import '../../../domain/usecases/verify_email_code_usecase.dart';
-import '../../../domain/usecases/get_current_session_usecase.dart';
-import '../../../domain/repositories/auth_repository.dart';
+import '../../../../core/utils/app_logger.dart';
+import '../../../../domain/usecases/request_code_usecase.dart';
+import '../../../../domain/usecases/verify_code_usecase.dart';
+import '../../../../domain/usecases/register_password_usecase.dart';
+import '../../../../domain/usecases/login_password_usecase.dart';
+import '../../../../domain/usecases/request_email_code_usecase.dart';
+import '../../../../domain/usecases/verify_email_code_usecase.dart';
+import '../../../../domain/usecases/get_current_session_usecase.dart';
+import '../../../../domain/repositories/auth_repository.dart';
 import 'auth_event.dart';
 import 'auth_state.dart';
 

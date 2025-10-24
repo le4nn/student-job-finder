@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_padding.dart';
-import '../../../core/constants/app_radii.dart';
-import '../../../core/constants/app_sizes.dart';
-import '../../../core/constants/app_text_styles.dart';
+import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_padding.dart';
+import '../../../../core/constants/app_radii.dart';
+import '../../../../core/constants/app_sizes.dart';
+import '../../../../core/constants/app_text_styles.dart';
 
 class RoleSelector extends StatelessWidget {
   final String selectedRole;

@@ -14,4 +14,9 @@ class AppPadding {
   static double get verticalLg => 24.h;
   static double get verticalXl => 32.h;
   static double get verticalXxl => 48.h;
+  
+  // Alias shortcuts
+  static double get small => 8.w;
+  static double get medium => 16.w;
+  static double get large => 24.w;
 }
