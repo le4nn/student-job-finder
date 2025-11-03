@@ -1,16 +1,14 @@
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 class AppRadii {
-  static double get xs => 4.r;
-  static double get sm => 8.r;
-  static double get md => 12.r;
-  static double get lg => 16.r;
-  static double get xl => 20.r;
-  static double get xxl => 24.r;
-  static double get circular => 999.r;
+  static const double xs = 4.0;
+  static const double sm = 8.0;
+  static const double md = 12.0;
+  static const double lg = 16.0;
+  static const double xl = 20.0;
+  static const double xxl = 24.0;
+  static const double circular = 999.0;
   
   // Alias shortcuts
-  static double get small => 8.r;
-  static double get medium => 12.r;
-  static double get large => 16.r;
+  static const double small = 8.0;
+  static const double medium = 12.0;
+  static const double large = 16.0;
 }

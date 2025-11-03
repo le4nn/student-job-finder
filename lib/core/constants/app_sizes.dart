@@ -1,42 +1,40 @@
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 class AppSizes {
-  static double get iconXs => 16.w;
-  static double get iconSm => 20.w;
-  static double get iconMd => 24.w;
-  static double get iconLg => 32.w;
-  static double get iconXl => 40.w;
-  static double get iconXxl => 48.w;
+  static const double iconXs = 16.0;
+  static const double iconSm = 20.0;
+  static const double iconMd = 24.0;
+  static const double iconLg = 32.0;
+  static const double iconXl = 40.0;
+  static const double iconXxl = 48.0;
   
-  static double get buttonHeightSm => 40.h;
-  static double get buttonHeightMd => 48.h;
-  static double get buttonHeightLg => 56.h;
+  static const double buttonHeightSm = 40.0;
+  static const double buttonHeightMd = 48.0;
+  static const double buttonHeightLg = 56.0;
   
-  static double get inputHeightSm => 40.h;
-  static double get inputHeightMd => 48.h;
-  static double get inputHeightLg => 56.h;
+  static const double inputHeightSm = 40.0;
+  static const double inputHeightMd = 48.0;
+  static const double inputHeightLg = 56.0;
   
-  static double get avatarXs => 24.w;
-  static double get avatarSm => 32.w;
-  static double get avatarMd => 40.w;
-  static double get avatarLg => 56.w;
-  static double get avatarXl => 80.w;
+  static const double avatarXs = 24.0;
+  static const double avatarSm = 32.0;
+  static const double avatarMd = 40.0;
+  static const double avatarLg = 56.0;
+  static const double avatarXl = 80.0;
   
-  static double get cardWidth => 200.w;
-  static double get cardHeight => 150.h;
+  static const double cardWidth = 200.0;
+  static const double cardHeight = 150.0;
   
-  static double get logoSmall => 80.w;
-  static double get logoMedium => 120.w;
-  static double get logoLarge => 150.w;
+  static const double logoSmall = 80.0;
+  static const double logoMedium = 120.0;
+  static const double logoLarge = 150.0;
   
-  static double get loadingIndicatorSm => 24.w;
+  static const double loadingIndicatorSm = 24.0;
   
-  static double get otpBoxSize => 50.w;
+  static const double otpBoxSize = 50.0;
   
-  static double get borderWidth => 2.0;
+  static const double borderWidth = 2.0;
   
-  static double get opacityHidden => 0.0;
+  static const double opacityHidden = 0.0;
   
-  static double get logoHeightRatio => 0.75;
-  static double get iconSizeRatio => 0.5;
+  static const double logoHeightRatio = 0.75;
+  static const double iconSizeRatio = 0.5;
 }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/constants/app_colors.dart';
@@ -50,23 +49,23 @@ class VacancyCard extends StatelessWidget {
                   style: AppTextStyles.h3,
                 ),
               ),
-              SizedBox(width: 8.w),
+              const SizedBox(width: 8),
               _buildStatusChip(),
             ],
           ),
-          SizedBox(height: 4.h),
+          const SizedBox(height: 4),
           Text(
             vacancy.companyName,
             style: AppTextStyles.body.copyWith(
               color: AppColors.textSecondary,
             ),
           ),
-          SizedBox(height: 12.h),
+          const SizedBox(height: 12),
           if (vacancy.salaryFrom != null || vacancy.salaryTo != null)
             _buildSalaryText(),
-          SizedBox(height: 12.h),
+          const SizedBox(height: 12),
           _buildInfoRow(),
-          SizedBox(height: 16.h),
+          const SizedBox(height: 16),
           _buildActionButtons(),
         ],
       ),
@@ -101,9 +100,9 @@ class VacancyCard extends StatelessWidget {
     }
 
     return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: 12.w,
-        vertical: 6.h,
+      padding: const EdgeInsets.symmetric(
+        horizontal: 12,
+        vertical: 6,
       ),
       decoration: BoxDecoration(
         color: backgroundColor,
@@ -141,8 +140,8 @@ class VacancyCard extends StatelessWidget {
 
   Widget _buildInfoRow() {
     return Wrap(
-      spacing: 16.w,
-      runSpacing: 8.h,
+      spacing: 16,
+      runSpacing: 8,
       children: [
         _buildInfoItem(Icons.location_on_outlined, vacancy.location),
         _buildInfoItem(Icons.work_outline, vacancy.format),
@@ -169,10 +168,10 @@ class VacancyCard extends StatelessWidget {
       children: [
         Icon(
           icon,
-          size: 16.sp,
+          size: 16,
           color: AppColors.textSecondary,
         ),
-        SizedBox(width: 4.w),
+        const SizedBox(width: 4),
         Text(
           text,
           style: AppTextStyles.caption.copyWith(
@@ -189,10 +188,10 @@ class VacancyCard extends StatelessWidget {
         Expanded(
           child: OutlinedButton.icon(
             onPressed: onView,
-            icon: Icon(Icons.visibility_outlined, size: 18.sp),
+            icon: const Icon(Icons.visibility_outlined, size: 18),
             label: const Text('Просмотр'),
             style: OutlinedButton.styleFrom(
-              padding: EdgeInsets.symmetric(vertical: 12.h),
+              padding: const EdgeInsets.symmetric(vertical: 12),
               side: const BorderSide(color: AppColors.border),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(AppRadii.medium),
@@ -200,14 +199,14 @@ class VacancyCard extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(width: 8.w),
+        const SizedBox(width: 8),
         Expanded(
           child: OutlinedButton.icon(
             onPressed: onEdit,
-            icon: Icon(Icons.edit_outlined, size: 18.sp),
+            icon: const Icon(Icons.edit_outlined, size: 18),
             label: const Text('Изменить'),
             style: OutlinedButton.styleFrom(
-              padding: EdgeInsets.symmetric(vertical: 12.h),
+              padding: const EdgeInsets.symmetric(vertical: 12),
               side: const BorderSide(color: AppColors.border),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(AppRadii.medium),
@@ -215,13 +214,13 @@ class VacancyCard extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(width: 8.w),
+        const SizedBox(width: 8),
         IconButton(
           onPressed: onDelete,
-          icon: Icon(
+          icon: const Icon(
             Icons.delete_outline,
             color: Colors.red,
-            size: 24.sp,
+            size: 24,
           ),
         ),
       ],

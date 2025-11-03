@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_radii.dart';
 import '../../../../core/constants/app_sizes.dart';
@@ -15,7 +14,7 @@ class AppLogo extends StatelessWidget {
     
     return Container(
       width: logoSize,
-      height: (logoSize * AppSizes.logoHeightRatio).h,
+      height: logoSize * AppSizes.logoHeightRatio,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(AppRadii.lg),
         color: AppColors.blue50,

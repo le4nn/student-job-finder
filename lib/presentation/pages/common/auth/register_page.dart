@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:responsive_builder/responsive_builder.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_padding.dart';
@@ -76,152 +77,180 @@ class _RegisterPageState extends State<RegisterPage> {
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.all(AppPadding.lg),
-          child: BlocListener<AuthBloc, AuthState>(
-            listener: (context, state) {
-              if (state is AuthAuthenticated) {
-                context.go('/home');
-              } else if (state is AuthError) {
-                _showError(state.message);
-              }
-            },
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                SizedBox(height: AppPadding.xxl),
+      body: ResponsiveBuilder(
+        builder: (context, sizingInfo) {
+          return SafeArea(
+            child: BlocListener<AuthBloc, AuthState>(
+              listener: (context, state) {
+                if (state is AuthAuthenticated) {
+                  context.go('/home');
+                } else if (state is AuthError) {
+                  _showError(state.message);
+                }
+              },
+              child: ScreenTypeLayout.builder(
+                mobile: (context) => _buildMobileLayout(colorScheme, sizingInfo),
+                tablet: (context) => _buildTabletLayout(colorScheme, sizingInfo),
+                desktop: (context) => _buildDesktopLayout(colorScheme, sizingInfo),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
 
-                const Center(child: AppLogo()),
+  Widget _buildMobileLayout(ColorScheme colorScheme, SizingInformation sizingInfo) {
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(AppPadding.lg),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SizedBox(height: AppPadding.xxl),
+          const Center(child: AppLogo()),
+          SizedBox(height: AppPadding.xl),
+          Text(
+            'Регистрация',
+            style: AppTextStyles.headlineMedium.copyWith(
+              color: colorScheme.onSurface,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: AppPadding.sm),
+          Text(
+            'Создайте аккаунт для продолжения',
+            style: AppTextStyles.bodyLarge.copyWith(
+              color: AppColors.textSecondary,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: AppPadding.xl),
 
-                SizedBox(height: AppPadding.xl),
-
-                Text(
-                  'Регистрация',
-                  style: AppTextStyles.headlineMedium.copyWith(
-                    color: colorScheme.onSurface,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-
-                SizedBox(height: AppPadding.sm),
-
-                Text(
-                  'Создайте аккаунт для продолжения',
-                  style: AppTextStyles.bodyLarge.copyWith(
-                    color: AppColors.textSecondary,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-
-                SizedBox(height: AppPadding.xl),
-
-                RoleSelector(
-                  selectedRole: _selectedRole,
-                  onRoleChanged: (role) => setState(() => _selectedRole = role),
-                ),
-
-                SizedBox(height: AppPadding.lg),
-
-                TextField(
-                  controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                    labelText: 'Email',
-                    hintText: 'your@email.com',
-                    prefixIcon: const Icon(Icons.email_outlined),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(AppRadii.md),
-                    ),
-                  ),
-                ),
-
-                SizedBox(height: AppPadding.md),
-
-                TextField(
-                  controller: _passwordController,
-                  obscureText: _obscurePassword,
-                  decoration: InputDecoration(
-                    labelText: 'Пароль',
-                    hintText: 'Минимум 6 символов',
-                    prefixIcon: const Icon(Icons.lock_outline),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscurePassword ? Icons.visibility : Icons.visibility_off,
-                      ),
-                      onPressed: () {
-                        setState(() => _obscurePassword = !_obscurePassword);
-                      },
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(AppRadii.md),
-                    ),
-                  ),
-                ),
-
-                SizedBox(height: AppPadding.md),
-
-                TextField(
-                  controller: _confirmPasswordController,
-                  obscureText: _obscureConfirm,
-                  decoration: InputDecoration(
-                    labelText: 'Подтвердите пароль',
-                    hintText: 'Повторите пароль',
-                    prefixIcon: const Icon(Icons.lock_outline),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscureConfirm ? Icons.visibility : Icons.visibility_off,
-                      ),
-                      onPressed: () {
-                        setState(() => _obscureConfirm = !_obscureConfirm);
-                      },
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(AppRadii.md),
-                    ),
-                  ),
-                ),
-
-                SizedBox(height: AppPadding.xl),
-
-                BlocBuilder<AuthBloc, AuthState>(
-                  builder: (context, state) {
-                    final isLoading = state is AuthLoading;
-                    return PrimaryButton(
-                      text: 'Зарегистрироваться',
-                      onPressed: _register,
-                      isLoading: isLoading,
-                    );
-                  },
-                ),
-
-                SizedBox(height: AppPadding.md),
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Уже есть аккаунт? ',
-                      style: AppTextStyles.bodyMedium.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () => context.go('/login-password'),
-                      child: Text(
-                        'Войти',
-                        style: AppTextStyles.bodyMedium.copyWith(
-                          color: colorScheme.primary,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+          RoleSelector(
+            selectedRole: _selectedRole,
+            onRoleChanged: (role) => setState(() => _selectedRole = role),
+          ),
+          SizedBox(height: AppPadding.lg),
+          TextField(
+            controller: _emailController,
+            keyboardType: TextInputType.emailAddress,
+            decoration: InputDecoration(
+              labelText: 'Email',
+              hintText: 'your@email.com',
+              prefixIcon: const Icon(Icons.email_outlined),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppRadii.md),
+              ),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: AppPadding.md,
+                vertical: AppPadding.md,
+              ),
             ),
           ),
-        ),
+          SizedBox(height: AppPadding.md),
+          TextField(
+            controller: _passwordController,
+            obscureText: _obscurePassword,
+            decoration: InputDecoration(
+              labelText: 'Пароль',
+              hintText: 'Минимум 6 символов',
+              prefixIcon: const Icon(Icons.lock_outline),
+              suffixIcon: IconButton(
+                icon: Icon(
+                  _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                ),
+                onPressed: () {
+                  setState(() => _obscurePassword = !_obscurePassword);
+                },
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppRadii.md),
+              ),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: AppPadding.md,
+                vertical: AppPadding.md,
+              ),
+            ),
+          ),
+          SizedBox(height: AppPadding.md),
+          TextField(
+            controller: _confirmPasswordController,
+            obscureText: _obscureConfirm,
+            decoration: InputDecoration(
+              labelText: 'Подтвердите пароль',
+              hintText: 'Повторите пароль',
+              prefixIcon: const Icon(Icons.lock_outline),
+              suffixIcon: IconButton(
+                icon: Icon(
+                  _obscureConfirm ? Icons.visibility : Icons.visibility_off,
+                ),
+                onPressed: () {
+                  setState(() => _obscureConfirm = !_obscureConfirm);
+                },
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppRadii.md),
+              ),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: AppPadding.md,
+                vertical: AppPadding.md,
+              ),
+            ),
+          ),
+          SizedBox(height: AppPadding.xl),
+          BlocBuilder<AuthBloc, AuthState>(
+            builder: (context, state) {
+              final isLoading = state is AuthLoading;
+              return PrimaryButton(
+                text: 'Зарегистрироваться',
+                onPressed: _register,
+                isLoading: isLoading,
+              );
+            },
+          ),
+          SizedBox(height: AppPadding.md),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Уже есть аккаунт? ',
+                style: AppTextStyles.bodyMedium.copyWith(
+                  color: AppColors.textSecondary,
+                ),
+              ),
+              TextButton(
+                onPressed: () => context.go('/login-password'),
+                child: Text(
+                  'Войти',
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    color: colorScheme.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTabletLayout(ColorScheme colorScheme, SizingInformation sizingInfo) {
+    return Center(
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 600),
+        padding: EdgeInsets.all(AppPadding.xl),
+        child: _buildMobileLayout(colorScheme, sizingInfo),
+      ),
+    );
+  }
+
+  Widget _buildDesktopLayout(ColorScheme colorScheme, SizingInformation sizingInfo) {
+    return Center(
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 500),
+        padding: EdgeInsets.all(AppPadding.xl * 2),
+        child: _buildMobileLayout(colorScheme, sizingInfo),
       ),
     );
   }

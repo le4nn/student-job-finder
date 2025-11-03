@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../resume/resumes_list_page.dart';
 import '../messages/messages_page.dart';
@@ -40,7 +39,7 @@ class _EmployerMainPageState extends State<EmployerMainPage> {
         ),
         child: SafeArea(
           child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 8.h),
+            padding: const EdgeInsets.symmetric(vertical: 8),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -87,10 +86,10 @@ class _EmployerMainPageState extends State<EmployerMainPage> {
       },
       behavior: HitTestBehavior.opaque,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
           color: isSelected ? AppColors.primary.withOpacity(0.1) : Colors.transparent,
-          borderRadius: BorderRadius.circular(12.r),
+          borderRadius: BorderRadius.circular(12),
           border: isSelected
               ? Border.all(color: AppColors.primary, width: 1.5)
               : null,
@@ -104,15 +103,15 @@ class _EmployerMainPageState extends State<EmployerMainPage> {
                 Icon(
                   icon,
                   color: isSelected ? AppColors.primary : AppColors.textSecondary,
-                  size: 24.sp,
+                  size: 24,
                 ),
                 if (index == 1) // Уведомление для сообщений
                   Positioned(
                     right: -4,
                     top: -4,
                     child: Container(
-                      width: 8.w,
-                      height: 8.h,
+                      width: 8,
+                      height: 8,
                       decoration: const BoxDecoration(
                         color: AppColors.primary,
                         shape: BoxShape.circle,
@@ -121,11 +120,11 @@ class _EmployerMainPageState extends State<EmployerMainPage> {
                   ),
               ],
             ),
-            SizedBox(height: 4.h),
+            const SizedBox(height: 4),
             Text(
               label,
               style: TextStyle(
-                fontSize: 12.sp,
+                fontSize: 12,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                 color: isSelected ? AppColors.primary : AppColors.textSecondary,
               ),

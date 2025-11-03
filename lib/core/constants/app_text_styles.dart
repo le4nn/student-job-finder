@@ -1,115 +1,114 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AppTextStyles {
-  static TextStyle get displayLarge => TextStyle(
-        fontSize: 57.sp,
+  static const TextStyle displayLarge = TextStyle(
+        fontSize: 57,
         fontWeight: FontWeight.bold,
       );
   
-  static TextStyle get displayMedium => TextStyle(
-        fontSize: 45.sp,
+  static const TextStyle displayMedium = TextStyle(
+        fontSize: 45,
         fontWeight: FontWeight.bold,
       );
   
-  static TextStyle get displaySmall => TextStyle(
-        fontSize: 36.sp,
+  static const TextStyle displaySmall = TextStyle(
+        fontSize: 36,
         fontWeight: FontWeight.bold,
       );
   
-  static TextStyle get headlineLarge => TextStyle(
-        fontSize: 32.sp,
+  static const TextStyle headlineLarge = TextStyle(
+        fontSize: 32,
         fontWeight: FontWeight.bold,
       );
   
-  static TextStyle get headlineMedium => TextStyle(
-        fontSize: 28.sp,
+  static const TextStyle headlineMedium = TextStyle(
+        fontSize: 28,
         fontWeight: FontWeight.bold,
       );
   
-  static TextStyle get headlineSmall => TextStyle(
-        fontSize: 24.sp,
+  static const TextStyle headlineSmall = TextStyle(
+        fontSize: 24,
         fontWeight: FontWeight.bold,
       );
   
-  static TextStyle get titleLarge => TextStyle(
-        fontSize: 22.sp,
+  static const TextStyle titleLarge = TextStyle(
+        fontSize: 22,
         fontWeight: FontWeight.w600,
       );
   
-  static TextStyle get titleMedium => TextStyle(
-        fontSize: 16.sp,
+  static const TextStyle titleMedium = TextStyle(
+        fontSize: 16,
         fontWeight: FontWeight.w600,
       );
   
-  static TextStyle get titleSmall => TextStyle(
-        fontSize: 14.sp,
+  static const TextStyle titleSmall = TextStyle(
+        fontSize: 14,
         fontWeight: FontWeight.w600,
       );
   
-  static TextStyle get bodyLarge => TextStyle(
-        fontSize: 16.sp,
+  static const TextStyle bodyLarge = TextStyle(
+        fontSize: 16,
         fontWeight: FontWeight.normal,
       );
   
-  static TextStyle get bodyMedium => TextStyle(
-        fontSize: 14.sp,
+  static const TextStyle bodyMedium = TextStyle(
+        fontSize: 14,
         fontWeight: FontWeight.normal,
       );
   
-  static TextStyle get bodySmall => TextStyle(
-        fontSize: 12.sp,
+  static const TextStyle bodySmall = TextStyle(
+        fontSize: 12,
         fontWeight: FontWeight.normal,
       );
   
-  static TextStyle get labelLarge => TextStyle(
-        fontSize: 14.sp,
+  static const TextStyle labelLarge = TextStyle(
+        fontSize: 14,
         fontWeight: FontWeight.w500,
       );
   
-  static TextStyle get labelMedium => TextStyle(
-        fontSize: 12.sp,
+  static const TextStyle labelMedium = TextStyle(
+        fontSize: 12,
         fontWeight: FontWeight.w500,
       );
   
-  static TextStyle get labelSmall => TextStyle(
-        fontSize: 11.sp,
+  static const TextStyle labelSmall = TextStyle(
+        fontSize: 11,
         fontWeight: FontWeight.w500,
       );
   
-  static TextStyle get button => TextStyle(
-        fontSize: 16.sp,
+  static const TextStyle button = TextStyle(
+        fontSize: 16,
         fontWeight: FontWeight.w600,
       );
   
   // Alias shortcuts
-  static TextStyle get h1 => TextStyle(
-        fontSize: 28.sp,
+  static const TextStyle h1 = TextStyle(
+        fontSize: 28,
         fontWeight: FontWeight.bold,
       );
   
-  static TextStyle get h2 => TextStyle(
-        fontSize: 24.sp,
+  static const TextStyle h2 = TextStyle(
+        fontSize: 24,
         fontWeight: FontWeight.bold,
       );
   
-  static TextStyle get h3 => TextStyle(
-        fontSize: 20.sp,
+  static const TextStyle h3 = TextStyle(
+        fontSize: 20,
         fontWeight: FontWeight.w600,
       );
   
-  static TextStyle get h4 => TextStyle(
-        fontSize: 18.sp,
+  static const TextStyle h4 = TextStyle(
+        fontSize: 18,
         fontWeight: FontWeight.w600,
       );
   
-  static TextStyle get body => TextStyle(
-        fontSize: 16.sp,
+  static const TextStyle body = TextStyle(
+        fontSize: 16,
         fontWeight: FontWeight.normal,
       );
   
-  static TextStyle get caption => TextStyle(
-        fontSize: 14.sp,
+  static const TextStyle caption = TextStyle(
+        fontSize: 14,
         fontWeight: FontWeight.normal,
       );
 }

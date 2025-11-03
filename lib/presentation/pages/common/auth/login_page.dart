@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:responsive_builder/responsive_builder.dart';
 import 'package:student_job_finder/utils/extensions/string_extensions.dart';
 
 import '../../../../core/di/injection.dart';
@@ -91,144 +92,162 @@ class _LoginPageState extends State<LoginPage> {
     
     return Scaffold(
       backgroundColor: colorScheme.background,
-      body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.all(AppPadding.lg),
-          child: BlocListener<AuthBloc, AuthState>(
-            listener: (context, state) {
-              if (state is AuthCodeSent) {
-                _logger.logNavigation('OtpVerificationPage');
-                context.go(AppRoutes.otpVerification, extra: {
-                  'phoneNumber': state.phoneNumber,
-                  'role': state.role,
-                });
-              } else if (state is AuthError) {
-                _logger.logError('Login', state.message);
-                _showError(state.message);
-              }
+      body: ResponsiveBuilder(
+        builder: (context, sizingInfo) {
+          return SafeArea(
+            child: BlocListener<AuthBloc, AuthState>(
+              listener: (context, state) {
+                if (state is AuthCodeSent) {
+                  _logger.logNavigation('OtpVerificationPage');
+                  context.go(AppRoutes.otpVerification, extra: {
+                    'phoneNumber': state.phoneNumber,
+                    'role': state.role,
+                  });
+                } else if (state is AuthError) {
+                  _logger.logError('Login', state.message);
+                  _showError(state.message);
+                }
+              },
+              child: ScreenTypeLayout.builder(
+                mobile: (context) => _buildMobileLayout(colorScheme, sizingInfo),
+                tablet: (context) => _buildTabletLayout(colorScheme, sizingInfo),
+                desktop: (context) => _buildDesktopLayout(colorScheme, sizingInfo),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildMobileLayout(ColorScheme colorScheme, SizingInformation sizingInfo) {
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(AppPadding.lg),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SizedBox(height: AppPadding.xxl),
+          Center(child: const AppLogo()),
+          SizedBox(height: AppPadding.xl),
+          Text(
+            'JobFinder',
+            style: AppTextStyles.headlineMedium.copyWith(
+              color: colorScheme.onBackground,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: AppPadding.sm),
+          Text(
+            'Найди работу или стажировку мечты',
+            style: AppTextStyles.bodyLarge.copyWith(
+              color: AppColors.textSecondary,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: AppPadding.xl),
+
+          RoleSelector(
+            selectedRole: _selectedRole,
+            onRoleChanged: (role) => setState(() => _selectedRole = role),
+          ),
+          SizedBox(height: AppPadding.lg),
+
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Номер телефона',
+                style: AppTextStyles.bodyLarge.copyWith(
+                  fontWeight: FontWeight.w500,
+                  color: colorScheme.onSurface,
+                ),
+              ),
+              SizedBox(height: AppPadding.sm),
+              TextField(
+                controller: _phoneController,
+                keyboardType: TextInputType.phone,
+                decoration: InputDecoration(
+                  hintText: '+ 7 (777) 777 77 77',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(AppRadii.md),
+                  ),
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: AppPadding.md,
+                    vertical: AppPadding.md,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: AppPadding.xl),
+
+          BlocBuilder<AuthBloc, AuthState>(
+            builder: (context, state) {
+              final isLoading = state is AuthLoading;
+              return PrimaryButton(
+                text: 'Получить код',
+                onPressed: _sendOtp,
+                isLoading: isLoading,
+              );
             },
-            child: Column(
-              children: [
-                const Spacer(flex: 2),
-
-                const AppLogo(),
-
-                SizedBox(height: AppPadding.xl),
-
-                Text(
-                  'JobFinder',
-                  style: AppTextStyles.headlineMedium.copyWith(
-                    color: colorScheme.onBackground,
-                  ),
-                ),
-
-                SizedBox(height: AppPadding.sm),
-
-                Text(
-                  'Найди работу или стажировку мечты',
-                  style: AppTextStyles.bodyLarge.copyWith(
-                    color: AppColors.textSecondary,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-
-                SizedBox(height: AppPadding.xl),
-
-                RoleSelector(
-                  selectedRole: _selectedRole,
-                  onRoleChanged: (role) => setState(() => _selectedRole = role),
-                ),
-
-                SizedBox(height: AppPadding.lg),
-
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Номер телефона',
-                      style: AppTextStyles.bodyLarge.copyWith(
-                        fontWeight: FontWeight.w500,
-                        color: colorScheme.onSurface,
-                      ),
-                    ),
-                    SizedBox(height: AppPadding.sm),
-                    TextField(
-                      controller: _phoneController,
-                      keyboardType: TextInputType.phone,
-                      decoration: InputDecoration(
-                        hintText: '+ 7 (777) 777 77 77',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(AppRadii.md),
-                        ),
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: AppPadding.md,
-                          vertical: AppPadding.md,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-
-                SizedBox(height: AppPadding.xl),
-
-                BlocBuilder<AuthBloc, AuthState>(
-                  builder: (context, state) {
-                    final isLoading = state is AuthLoading;
-                    return PrimaryButton(
-                      text: 'Получить код',
-                      onPressed: _sendOtp,
-                      isLoading: isLoading,
-                    );
-                  },
-                ),
-
-                SizedBox(height: AppPadding.md),
-
-                Text(
-                  'Нажимая "Получить код", вы соглашаетесь с\nусловиями использования',
+          ),
+          SizedBox(height: AppPadding.md),
+          Text(
+            'Нажимая "Получить код", вы соглашаетесь с\nусловиями использования',
+            style: AppTextStyles.bodySmall.copyWith(
+              color: AppColors.textSecondary,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: AppPadding.md),
+          Row(
+            children: [
+              Expanded(child: Divider(color: AppColors.divider)),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: AppPadding.md),
+                child: Text(
+                  'или',
                   style: AppTextStyles.bodySmall.copyWith(
                     color: AppColors.textSecondary,
                   ),
-                  textAlign: TextAlign.center,
                 ),
-
-                SizedBox(height: AppPadding.md),
-
-                Row(
-                  children: [
-                    Expanded(child: Divider(color: AppColors.divider)),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: AppPadding.md),
-                      child: Text(
-                        'или',
-                        style: AppTextStyles.bodySmall.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                    ),
-                    Expanded(child: Divider(color: AppColors.divider)),
-                  ],
-                ),
-
-                SizedBox(height: AppPadding.md),
-
-                OutlinedButton.icon(
-                  onPressed: () => context.go('/login-password'),
-                  icon: const Icon(Icons.lock_outline),
-                  label: const Text('Войти через пароль'),
-                  style: OutlinedButton.styleFrom(
-                    minimumSize: Size(double.infinity, AppSizes.buttonHeightLg),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(AppRadii.md),
-                    ),
-                  ),
-                ),
-
-                const Spacer(flex: 3),
-              ],
+              ),
+              Expanded(child: Divider(color: AppColors.divider)),
+            ],
+          ),
+          SizedBox(height: AppPadding.md),
+          OutlinedButton.icon(
+            onPressed: () => context.go('/login-password'),
+            icon: const Icon(Icons.lock_outline),
+            label: const Text('Войти через пароль'),
+            style: OutlinedButton.styleFrom(
+              minimumSize: Size(double.infinity, AppSizes.buttonHeightLg),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppRadii.md),
+              ),
             ),
           ),
-        ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTabletLayout(ColorScheme colorScheme, SizingInformation sizingInfo) {
+    return Center(
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 600),
+        padding: EdgeInsets.all(AppPadding.xl),
+        child: _buildMobileLayout(colorScheme, sizingInfo),
+      ),
+    );
+  }
+
+  Widget _buildDesktopLayout(ColorScheme colorScheme, SizingInformation sizingInfo) {
+    return Center(
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 500),
+        padding: EdgeInsets.all(AppPadding.xl * 2),
+        child: _buildMobileLayout(colorScheme, sizingInfo),
       ),
     );
   }

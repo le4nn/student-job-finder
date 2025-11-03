@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:responsive_builder/responsive_builder.dart';
 import '../../../../core/routes/app_routes.dart';
 
 import '../../../../core/constants/app_colors.dart';
@@ -121,139 +122,155 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
     
     return Scaffold(
       backgroundColor: colorScheme.background,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.all(AppPadding.lg),
-          child: BlocListener<AuthBloc, AuthState>(
-            listener: (context, state) {
-              if (state is AuthAuthenticated) {
-                _showSuccess('Код подтвержден успешно!');
-                context.go(AppRoutes.employerHome);
-              } else if (state is AuthError) {
-                _showError(state.message);
-              } else if (state is AuthCodeSent) {
-                _showSuccess('Код отправлен повторно');
-              }
+      body: ResponsiveBuilder(
+        builder: (context, sizingInfo) {
+          return SafeArea(
+            child: BlocListener<AuthBloc, AuthState>(
+              listener: (context, state) {
+                if (state is AuthAuthenticated) {
+                  _showSuccess('Код подтвержден успешно!');
+                  context.go(AppRoutes.employerHome);
+                } else if (state is AuthError) {
+                  _showError(state.message);
+                } else if (state is AuthCodeSent) {
+                  _showSuccess('Код отправлен повторно');
+                }
+              },
+              child: ScreenTypeLayout.builder(
+                mobile: (context) => _buildMobileLayout(colorScheme, sizingInfo),
+                tablet: (context) => _buildTabletLayout(colorScheme, sizingInfo),
+                desktop: (context) => _buildDesktopLayout(colorScheme, sizingInfo),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildMobileLayout(ColorScheme colorScheme, SizingInformation sizingInfo) {
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(AppPadding.lg),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SizedBox(height: AppPadding.xxl),
+          Center(child: AppLogo(size: AppSizes.logoMedium)),
+          SizedBox(height: AppPadding.xl),
+          Text(
+            'JobFinder',
+            style: AppTextStyles.headlineMedium.copyWith(
+              color: colorScheme.onBackground,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: AppPadding.sm),
+          Text(
+            'Найди работу или стажировку мечты',
+            style: AppTextStyles.bodyLarge.copyWith(
+              color: AppColors.textSecondary,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: AppPadding.xl),
+          Text(
+            'Подтверждение',
+            style: AppTextStyles.headlineSmall.copyWith(
+              color: colorScheme.onBackground,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: AppPadding.sm),
+          Text(
+            'Введите код из SMS на номер\n${widget.phoneNumber}',
+            style: AppTextStyles.bodyLarge.copyWith(
+              color: AppColors.textSecondary,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: AppPadding.lg),
+
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Код подтверждения',
+                style: AppTextStyles.bodyLarge.copyWith(
+                  fontWeight: FontWeight.w500,
+                  color: colorScheme.onSurface,
+                ),
+              ),
+              SizedBox(height: AppPadding.sm),
+              OtpInputBoxes(otpCode: _otpCode),
+              Opacity(
+                opacity: AppSizes.opacityHidden,
+                child: TextField(
+                  controller: _otpController,
+                  keyboardType: TextInputType.number,
+                  maxLength: AppValues.maxOtpFieldLength,
+                  autofocus: true,
+                  onChanged: _onOtpChanged,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: AppPadding.lg),
+
+          BlocBuilder<AuthBloc, AuthState>(
+            builder: (context, state) {
+              final isLoading = state is AuthLoading;
+              return PrimaryButton(
+                text: 'Продолжить',
+                onPressed: _otpCode.length == AppValues.otpLength ? _verifyCode : null,
+                isLoading: isLoading,
+              );
             },
-            child: Column(
-              children: [
-                SizedBox(height: AppPadding.xxl),
-
-                AppLogo(size: AppSizes.logoMedium),
-
-                SizedBox(height: AppPadding.xl),
-
-                Text(
-                  'JobFinder',
-                  style: AppTextStyles.headlineMedium.copyWith(
-                    color: colorScheme.onBackground,
-                  ),
-                ),
-
-                SizedBox(height: AppPadding.sm),
-
-                Text(
-                  'Найди работу или стажировку мечты',
-                  style: AppTextStyles.bodyLarge.copyWith(
-                    color: AppColors.textSecondary,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-
-                SizedBox(height: AppPadding.xl),
-
-                Text(
-                  'Подтверждение',
-                  style: AppTextStyles.headlineSmall.copyWith(
-                    color: colorScheme.onBackground,
-                  ),
-                ),
-
-                SizedBox(height: AppPadding.sm),
-
-                Text(
-                  'Введите код из SMS на номер\n${widget.phoneNumber}',
-                  style: AppTextStyles.bodyLarge.copyWith(
-                    color: AppColors.textSecondary,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-
-                SizedBox(height: AppPadding.lg),
-
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Код подтверждения',
-                      style: AppTextStyles.bodyLarge.copyWith(
-                        fontWeight: FontWeight.w500,
-                        color: colorScheme.onSurface,
-                      ),
-                    ),
-                    SizedBox(height: AppPadding.sm),
-
-                    OtpInputBoxes(otpCode: _otpCode),
-
-                    Opacity(
-                      opacity: AppSizes.opacityHidden,
-                      child: TextField(
-                        controller: _otpController,
-                        keyboardType: TextInputType.number,
-                        maxLength: AppValues.maxOtpFieldLength,
-                        autofocus: true,
-                        onChanged: _onOtpChanged,
-                      ),
-                    ),
-                  ],
-                ),
-
-                SizedBox(height: AppPadding.lg),
-
-                BlocBuilder<AuthBloc, AuthState>(
-                  builder: (context, state) {
-                    final isLoading = state is AuthLoading;
-                    return PrimaryButton(
-                      text: 'Продолжить',
-                      onPressed: _otpCode.length == AppValues.otpLength ? _verifyCode : null,
-                      isLoading: isLoading,
-                    );
-                  },
-                ),
-
-                SizedBox(height: AppPadding.md),
-
-                TextButton(
-                  onPressed: () => context.pop(),
-                  child: Text(
-                    'Изменить номер телефона',
-                    style: AppTextStyles.bodySmall.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                ),
-
-                SizedBox(height: AppPadding.sm),
-
-                TextButton(
-                  onPressed: _canResendCode ? _resendCode : null,
-                  child: Text(
-                    _canResendCode
-                        ? 'Отправить код повторно'
-                        : 'Отправить код повторно ($_resendTimerс)',
-                    style: AppTextStyles.bodySmall.copyWith(
-                      color: _canResendCode
-                          ? colorScheme.primary
-                          : AppColors.textSecondary,
-                    ),
-                  ),
-                ),
-
-                SizedBox(height: AppPadding.xxl),
-              ],
+          ),
+          SizedBox(height: AppPadding.md),
+          TextButton(
+            onPressed: () => context.pop(),
+            child: Text(
+              'Изменить номер телефона',
+              style: AppTextStyles.bodySmall.copyWith(
+                color: AppColors.textSecondary,
+              ),
             ),
           ),
-        ),
+          SizedBox(height: AppPadding.sm),
+          TextButton(
+            onPressed: _canResendCode ? _resendCode : null,
+            child: Text(
+              _canResendCode
+                  ? 'Отправить код повторно'
+                  : 'Отправить код повторно ($_resendTimerс)',
+              style: AppTextStyles.bodySmall.copyWith(
+                color: _canResendCode
+                    ? colorScheme.primary
+                    : AppColors.textSecondary,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTabletLayout(ColorScheme colorScheme, SizingInformation sizingInfo) {
+    return Center(
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 600),
+        padding: EdgeInsets.all(AppPadding.xl),
+        child: _buildMobileLayout(colorScheme, sizingInfo),
+      ),
+    );
+  }
+
+  Widget _buildDesktopLayout(ColorScheme colorScheme, SizingInformation sizingInfo) {
+    return Center(
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 500),
+        padding: EdgeInsets.all(AppPadding.xl * 2),
+        child: _buildMobileLayout(colorScheme, sizingInfo),
       ),
     );
   }

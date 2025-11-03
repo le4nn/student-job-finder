@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:responsive_builder/responsive_builder.dart';
 import '../../../bloc/common/auth/auth_bloc.dart';
 import '../../../bloc/common/auth/auth_state.dart';
 
@@ -82,199 +82,219 @@ class _CreateVacancyPageState extends State<CreateVacancyPage> {
         ),
         centerTitle: false,
       ),
-      body: BlocListener<VacancyBloc, VacancyState>(
-        listener: (context, state) {
-          if (state is VacancyCreated) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Вакансия успешно создана')),
-            );
-            context.pop();
-          } else if (state is VacancyError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message)),
-            );
-          }
-        },
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            padding: EdgeInsets.all(AppPadding.medium),
-            children: [
-              _buildSection(
-                'Основная информация',
-                [
-                  _buildTextField(
-                    controller: _titleController,
-                    label: 'Название вакансии',
-                    required: true,
-                    hint: 'Frontend Developer',
-                  ),
-                  SizedBox(height: 16.h),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildDropdownField(
-                          value: _selectedType,
-                          items: _types,
-                          label: 'Тип',
-                          required: true,
-                          onChanged: (value) {
-                            setState(() => _selectedType = value);
-                          },
-                        ),
-                      ),
-                      SizedBox(width: 12.w),
-                      Expanded(
-                        child: _buildDropdownField(
-                          value: _selectedFormat,
-                          items: _formats,
-                          label: 'Формат',
-                          required: true,
-                          onChanged: (value) {
-                            setState(() => _selectedFormat = value);
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 16.h),
-                  _buildTextField(
-                    controller: _locationController,
-                    label: 'Локация',
-                    required: true,
-                    hint: 'Москва',
-                  ),
-                ],
-              ),
-              SizedBox(height: 24.h),
-              _buildSection(
-                'Зарплата',
-                [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildTextField(
-                          controller: _salaryFromController,
-                          label: 'От (₽)',
-                          hint: '80000',
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly,
-                          ],
-                        ),
-                      ),
-                      SizedBox(width: 12.w),
-                      Expanded(
-                        child: _buildTextField(
-                          controller: _salaryToController,
-                          label: 'До (₽)',
-                          hint: '120000',
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly,
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              SizedBox(height: 24.h),
-              _buildSection(
-                'Навыки',
-                [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: _skillController,
-                          decoration: InputDecoration(
-                            hintText: 'Добавить навык',
-                            filled: true,
-                            fillColor: AppColors.inputBackground,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(AppRadii.medium),
-                              borderSide: BorderSide.none,
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 8.w),
-                      ElevatedButton(
-                        onPressed: _addSkill,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: AppColors.textPrimary,
-                          side: const BorderSide(color: AppColors.border),
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 20.w,
-                            vertical: 16.h,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(AppRadii.medium),
-                          ),
-                        ),
-                        child: const Text('Добавить'),
-                      ),
-                    ],
-                  ),
-                  if (_skills.isNotEmpty) ...[
-                    SizedBox(height: 12.h),
-                    Wrap(
-                      spacing: 8.w,
-                      runSpacing: 8.h,
-                      children: _skills.map((skill) => _buildSkillChip(skill)).toList(),
+      body: ResponsiveBuilder(
+        builder: (context, sizingInformation) {
+          final isDesktop = sizingInformation.isDesktop;
+          final isTablet = sizingInformation.isTablet;
+          
+          return BlocListener<VacancyBloc, VacancyState>(
+            listener: (context, state) {
+              if (state is VacancyCreated) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Вакансия успешно создана')),
+                );
+                context.pop();
+              } else if (state is VacancyError) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(state.message)),
+                );
+              }
+            },
+            child: Center(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: isDesktop ? 900 : isTablet ? 700 : double.infinity,
+                ),
+                child: Form(
+                  key: _formKey,
+                  child: ListView(
+                    padding: EdgeInsets.all(
+                      isDesktop ? AppPadding.medium * 2 : AppPadding.medium,
                     ),
-                  ],
-                ],
-              ),
-              SizedBox(height: 24.h),
-              _buildSection(
-                'Описание',
+                    children: [
+                      _buildSection(
+                        'Основная информация',
+                        isDesktop,
+                        [
+                          _buildTextField(
+                            controller: _titleController,
+                            label: 'Название вакансии',
+                            required: true,
+                            hint: 'Frontend Developer',
+                          ),
+                          const SizedBox(height: 16),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: _buildDropdownField(
+                                  value: _selectedType,
+                                  items: _types,
+                                  label: 'Тип',
+                                  required: true,
+                                  onChanged: (value) {
+                                    setState(() => _selectedType = value);
+                                  },
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: _buildDropdownField(
+                                  value: _selectedFormat,
+                                  items: _formats,
+                                  label: 'Формат',
+                                  required: true,
+                                  onChanged: (value) {
+                                    setState(() => _selectedFormat = value);
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          _buildTextField(
+                            controller: _locationController,
+                            label: 'Локация',
+                            required: true,
+                            hint: 'Москва',
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+                      _buildSection(
+                        'Зарплата',
+                        isDesktop,
                 [
-                  _buildTextField(
-                    controller: _descriptionController,
-                    label: 'О вакансии',
-                    required: true,
-                    hint: 'Расскажите о вакансии, команде и компании...',
-                    maxLines: 5,
+                          Row(
+                            children: [
+                              Expanded(
+                                child: _buildTextField(
+                                  controller: _salaryFromController,
+                                  label: 'От (₽)',
+                                  hint: '80000',
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly,
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: _buildTextField(
+                                  controller: _salaryToController,
+                                  label: 'До (₽)',
+                                  hint: '120000',
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly,
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+                      _buildSection(
+                        'Навыки',
+                        isDesktop,
+                        [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: TextField(
+                                  controller: _skillController,
+                                  decoration: InputDecoration(
+                                    hintText: 'Добавить навык',
+                                    filled: true,
+                                    fillColor: AppColors.inputBackground,
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(AppRadii.medium),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              ElevatedButton(
+                                onPressed: _addSkill,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  foregroundColor: AppColors.textPrimary,
+                                  side: const BorderSide(color: AppColors.border),
+                                  padding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 16,
+                          ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(AppRadii.medium),
+                                  ),
+                                ),
+                                child: const Text('Добавить'),
+                              ),
+                            ],
+                          ),
+                          if (_skills.isNotEmpty) ...[
+                            const SizedBox(height: 12),
+                            Wrap(
+                              spacing: 8,
+                              runSpacing: 8,
+                              children: _skills.map((skill) => _buildSkillChip(skill)).toList(),
+                            ),
+                          ],
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+                      _buildSection(
+                        'Описание',
+                        isDesktop,
+                        [
+                          _buildTextField(
+                            controller: _descriptionController,
+                            label: 'О вакансии',
+                            required: true,
+                            hint: 'Расскажите о вакансии, команде и компании...',
+                            maxLines: 5,
+                          ),
+                          const SizedBox(height: 16),
+                          _buildTextField(
+                            controller: _responsibilitiesController,
+                            label: 'Обязанности',
+                            required: true,
+                            hint: '• Разработка пользовательских интерфейсов\n• Оптимизация производительности\n• Участие в code review',
+                            maxLines: 5,
+                          ),
+                          const SizedBox(height: 16),
+                          _buildTextField(
+                            controller: _requirementsController,
+                            label: 'Требования',
+                            required: true,
+                            hint: '• Опыт работы с React от 1 года\n• Знание TypeScript\n• Понимание принципов UX/UI',
+                            maxLines: 5,
+                          ),
+                          const SizedBox(height: 16),
+                          _buildTextField(
+                            controller: _benefitsController,
+                            label: 'Что предлагаем',
+                            hint: '• Гибкий график работы\n• Медицинская страховка\n• Обучение за счет компании',
+                            maxLines: 5,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 32),
+                      _buildActionButtons(),
+                      const SizedBox(height: 32),
+                    ],
                   ),
-                  SizedBox(height: 16.h),
-                  _buildTextField(
-                    controller: _responsibilitiesController,
-                    label: 'Обязанности',
-                    required: true,
-                    hint: '• Разработка пользовательских интерфейсов\n• Оптимизация производительности\n• Участие в code review',
-                    maxLines: 5,
-                  ),
-                  SizedBox(height: 16.h),
-                  _buildTextField(
-                    controller: _requirementsController,
-                    label: 'Требования',
-                    required: true,
-                    hint: '• Опыт работы с React от 1 года\n• Знание TypeScript\n• Понимание принципов UX/UI',
-                    maxLines: 5,
-                  ),
-                  SizedBox(height: 16.h),
-                  _buildTextField(
-                    controller: _benefitsController,
-                    label: 'Что предлагаем',
-                    hint: '• Гибкий график работы\n• Медицинская страховка\n• Обучение за счет компании',
-                    maxLines: 5,
-                  ),
-                ],
+                ),
               ),
-              SizedBox(height: 32.h),
-              _buildActionButtons(),
-              SizedBox(height: 32.h),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }
 
-  Widget _buildSection(String title, List<Widget> children) {
+  Widget _buildSection(String title, bool isDesktop, List<Widget> children) {
     return Container(
       padding: EdgeInsets.all(AppPadding.medium),
       decoration: BoxDecoration(
@@ -288,7 +308,7 @@ class _CreateVacancyPageState extends State<CreateVacancyPage> {
             title,
             style: AppTextStyles.h3,
           ),
-          SizedBox(height: 16.h),
+          const SizedBox(height: 16),
           ...children,
         ],
       ),
@@ -323,7 +343,7 @@ class _CreateVacancyPageState extends State<CreateVacancyPage> {
             ],
           ),
         ),
-        SizedBox(height: 8.h),
+        const SizedBox(height: 8),
         TextFormField(
           controller: controller,
           maxLines: maxLines,
@@ -381,7 +401,7 @@ class _CreateVacancyPageState extends State<CreateVacancyPage> {
             ],
           ),
         ),
-        SizedBox(height: 8.h),
+        const SizedBox(height: 8),
         DropdownButtonFormField<String>(
           value: value,
           items: items.map((item) {
@@ -437,7 +457,7 @@ class _CreateVacancyPageState extends State<CreateVacancyPage> {
           child: OutlinedButton(
             onPressed: () => context.pop(),
             style: OutlinedButton.styleFrom(
-              padding: EdgeInsets.symmetric(vertical: 16.h),
+              padding: const EdgeInsets.symmetric(vertical: 16),
               side: const BorderSide(color: AppColors.border),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(AppRadii.medium),
@@ -449,14 +469,14 @@ class _CreateVacancyPageState extends State<CreateVacancyPage> {
             ),
           ),
         ),
-        SizedBox(width: 12.w),
+        const SizedBox(width: 12),
         Expanded(
           flex: 2,
           child: ElevatedButton(
             onPressed: _submitForm,
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primary,
-              padding: EdgeInsets.symmetric(vertical: 16.h),
+              padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(AppRadii.medium),
               ),

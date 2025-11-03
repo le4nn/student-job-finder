@@ -1,22 +1,20 @@
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 class AppPadding {
-  static double get xs => 4.w;
-  static double get sm => 8.w;
-  static double get md => 16.w;
-  static double get lg => 24.w;
-  static double get xl => 32.w;
-  static double get xxl => 48.w;
+  static const double xs = 4.0;
+  static const double sm = 8.0;
+  static const double md = 16.0;
+  static const double lg = 24.0;
+  static const double xl = 32.0;
+  static const double xxl = 48.0;
   
-  static double get verticalXs => 4.h;
-  static double get verticalSm => 8.h;
-  static double get verticalMd => 16.h;
-  static double get verticalLg => 24.h;
-  static double get verticalXl => 32.h;
-  static double get verticalXxl => 48.h;
+  static const double verticalXs = 4.0;
+  static const double verticalSm = 8.0;
+  static const double verticalMd = 16.0;
+  static const double verticalLg = 24.0;
+  static const double verticalXl = 32.0;
+  static const double verticalXxl = 48.0;
   
   // Alias shortcuts
-  static double get small => 8.w;
-  static double get medium => 16.w;
-  static double get large => 24.w;
+  static const double small = 8.0;
+  static const double medium = 16.0;
+  static const double large = 24.0;
 }

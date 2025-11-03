@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:responsive_builder/responsive_builder.dart';
 import '../../../../core/widgets/sg_snackbar.dart';
 import '../../../../core/utils/exception_handler.dart';
 
@@ -68,154 +69,181 @@ class _LoginPasswordPageState extends State<LoginPasswordPage> {
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.all(AppPadding.lg),
-          child: BlocListener<AuthBloc, AuthState>(
-            listener: (context, state) {
-              if (state is AuthAuthenticated) {
-                context.go(AppRoutes.employerHome);
-              } else if (state is AuthError) {
-                _showError(state.message);
-              }
-            },
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                SizedBox(height: AppPadding.xxl * 2),
+      body: ResponsiveBuilder(
+        builder: (context, sizingInfo) {
+          return SafeArea(
+            child: BlocListener<AuthBloc, AuthState>(
+              listener: (context, state) {
+                if (state is AuthAuthenticated) {
+                  context.go(AppRoutes.employerHome);
+                } else if (state is AuthError) {
+                  _showError(state.message);
+                }
+              },
+              child: ScreenTypeLayout.builder(
+                mobile: (context) => _buildMobileLayout(colorScheme, sizingInfo),
+                tablet: (context) => _buildTabletLayout(colorScheme, sizingInfo),
+                desktop: (context) => _buildDesktopLayout(colorScheme, sizingInfo),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
 
-                const Center(child: AppLogo()),
+  Widget _buildMobileLayout(ColorScheme colorScheme, SizingInformation sizingInfo) {
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(AppPadding.lg),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SizedBox(height: AppPadding.xxl * 2),
 
-                SizedBox(height: AppPadding.xl),
+          const Center(child: AppLogo()),
+          SizedBox(height: AppPadding.xl),
 
-                Text(
-                  'Вход',
-                  style: AppTextStyles.headlineMedium.copyWith(
-                    color: colorScheme.onSurface,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
+          Text(
+            'Вход',
+            style: AppTextStyles.headlineMedium.copyWith(
+              color: colorScheme.onSurface,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: AppPadding.sm),
+          Text(
+            'Войдите с email или телефоном',
+            style: AppTextStyles.bodyLarge.copyWith(
+              color: AppColors.textSecondary,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: AppPadding.xxl),
 
-                SizedBox(height: AppPadding.sm),
-
-                Text(
-                  'Войдите с email или телефоном',
-                  style: AppTextStyles.bodyLarge.copyWith(
-                    color: AppColors.textSecondary,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-
-                SizedBox(height: AppPadding.xxl),
-
-                TextField(
-                  controller: _identifierController,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                    labelText: 'Email или телефон',
-                    hintText: 'your@email.com или +7...',
-                    prefixIcon: const Icon(Icons.person_outline),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(AppRadii.md),
-                    ),
-                  ),
-                ),
-
-                SizedBox(height: AppPadding.md),
-
-                TextField(
-                  controller: _passwordController,
-                  obscureText: _obscurePassword,
-                  decoration: InputDecoration(
-                    labelText: 'Пароль',
-                    hintText: 'Введите пароль',
-                    prefixIcon: const Icon(Icons.lock_outline),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscurePassword ? Icons.visibility : Icons.visibility_off,
-                      ),
-                      onPressed: () {
-                        setState(() => _obscurePassword = !_obscurePassword);
-                      },
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(AppRadii.md),
-                    ),
-                  ),
-                ),
-
-                SizedBox(height: AppPadding.xl),
-
-                BlocBuilder<AuthBloc, AuthState>(
-                  builder: (context, state) {
-                    final isLoading = state is AuthLoading;
-                    return PrimaryButton(
-                      text: 'Войти',
-                      onPressed: _login,
-                      isLoading: isLoading,
-                    );
-                  },
-                ),
-
-                SizedBox(height: AppPadding.md),
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Нет аккаунта? ',
-                      style: AppTextStyles.bodyMedium.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () => context.go('/register'),
-                      child: Text(
-                        'Регистрация',
-                        style: AppTextStyles.bodyMedium.copyWith(
-                          color: colorScheme.primary,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-
-                SizedBox(height: AppPadding.md),
-
-                Row(
-                  children: [
-                    Expanded(child: Divider(color: AppColors.divider)),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: AppPadding.md),
-                      child: Text(
-                        'или',
-                        style: AppTextStyles.bodySmall.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                    ),
-                    Expanded(child: Divider(color: AppColors.divider)),
-                  ],
-                ),
-
-                SizedBox(height: AppPadding.md),
-
-                OutlinedButton.icon(
-                  onPressed: () => context.go('/login'),
-                  icon: const Icon(Icons.phone_android),
-                  label: const Text('Войти через код'),
-                  style: OutlinedButton.styleFrom(
-                    minimumSize: Size(double.infinity, AppSizes.buttonHeightLg),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(AppRadii.md),
-                    ),
-                  ),
-                ),
-              ],
+          TextField(
+            controller: _identifierController,
+            keyboardType: TextInputType.emailAddress,
+            decoration: InputDecoration(
+              labelText: 'Email или телефон',
+              hintText: 'your@email.com или +7...',
+              prefixIcon: const Icon(Icons.person_outline),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppRadii.md),
+              ),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: AppPadding.md,
+                vertical: AppPadding.md,
+              ),
             ),
           ),
-        ),
+          SizedBox(height: AppPadding.md),
+          TextField(
+            controller: _passwordController,
+            obscureText: _obscurePassword,
+            decoration: InputDecoration(
+              labelText: 'Пароль',
+              hintText: 'Введите пароль',
+              prefixIcon: const Icon(Icons.lock_outline),
+              suffixIcon: IconButton(
+                icon: Icon(
+                  _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                ),
+                onPressed: () {
+                  setState(() => _obscurePassword = !_obscurePassword);
+                },
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppRadii.md),
+              ),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: AppPadding.md,
+                vertical: AppPadding.md,
+              ),
+            ),
+          ),
+          SizedBox(height: AppPadding.xl),
+
+          BlocBuilder<AuthBloc, AuthState>(
+            builder: (context, state) {
+              final isLoading = state is AuthLoading;
+              return PrimaryButton(
+                text: 'Войти',
+                onPressed: _login,
+                isLoading: isLoading,
+              );
+            },
+          ),
+          SizedBox(height: AppPadding.md),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Нет аккаунта? ',
+                style: AppTextStyles.bodyMedium.copyWith(
+                  color: AppColors.textSecondary,
+                ),
+              ),
+              TextButton(
+                onPressed: () => context.go('/register'),
+                child: Text(
+                  'Регистрация',
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    color: colorScheme.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: AppPadding.md),
+          Row(
+            children: [
+              Expanded(child: Divider(color: AppColors.divider)),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: AppPadding.md),
+                child: Text(
+                  'или',
+                  style: AppTextStyles.bodySmall.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ),
+              Expanded(child: Divider(color: AppColors.divider)),
+            ],
+          ),
+          SizedBox(height: AppPadding.md),
+          OutlinedButton.icon(
+            onPressed: () => context.go('/login'),
+            icon: const Icon(Icons.phone_android),
+            label: const Text('Войти через код'),
+            style: OutlinedButton.styleFrom(
+              minimumSize: Size(double.infinity, AppSizes.buttonHeightLg),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppRadii.md),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTabletLayout(ColorScheme colorScheme, SizingInformation sizingInfo) {
+    return Center(
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 600),
+        padding: EdgeInsets.all(AppPadding.xl),
+        child: _buildMobileLayout(colorScheme, sizingInfo),
+      ),
+    );
+  }
+
+  Widget _buildDesktopLayout(ColorScheme colorScheme, SizingInformation sizingInfo) {
+    return Center(
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 500),
+        padding: EdgeInsets.all(AppPadding.xl * 2),
+        child: _buildMobileLayout(colorScheme, sizingInfo),
       ),
     );
   }

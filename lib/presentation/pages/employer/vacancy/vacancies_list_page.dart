@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:responsive_builder/responsive_builder.dart';
 import '../../../../core/widgets/sg_snackbar.dart';
 import '../../../../core/utils/exception_handler.dart';
 import '../../../bloc/common/auth/auth_bloc.dart';
@@ -50,64 +50,78 @@ class _VacanciesListPageState extends State<VacanciesListPage> {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
-        child: BlocListener<VacancyBloc, VacancyState>(
-          listener: (context, state) {
-            if (state is VacancyError) {
-              snackBarBuilder(SnackBarOptions(
-                type: SnackBarType.error,
-                exception: ExceptionHandler(state.message),
-              ));
-            } else if (state is VacancyCreated) {
-              snackBarBuilder(SnackBarOptions(
-                type: SnackBarType.success,
-                title: 'Вакансия создана',
-              ));
-            } else if (state is VacancyUpdated) {
-              snackBarBuilder(SnackBarOptions(
-                type: SnackBarType.success,
-                title: 'Вакансия обновлена',
-              ));
-            } else if (state is VacancyDeleted) {
-              snackBarBuilder(SnackBarOptions(
-                type: SnackBarType.success,
-                title: 'Вакансия удалена',
-              ));
-            }
-          },
-          child: Column(
-            children: [
-              _buildHeader(),
-              _buildFilterTabs(),
-              Expanded(
-                child: BlocBuilder<VacancyBloc, VacancyState>(
-                  builder: (context, state) {
-                    if (state is VacancyLoading) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                    if (state is VacancyError) {
-                      return Center(
-                        child: Text(
-                          state.message,
-                          style: AppTextStyles.body,
+        child: ResponsiveBuilder(
+          builder: (context, sizingInformation) {
+            final isDesktop = sizingInformation.isDesktop;
+            final isTablet = sizingInformation.isTablet;
+
+            return BlocListener<VacancyBloc, VacancyState>(
+              listener: (context, state) {
+                if (state is VacancyError) {
+                  snackBarBuilder(SnackBarOptions(
+                    type: SnackBarType.error,
+                    exception: ExceptionHandler(state.message),
+                  ));
+                } else if (state is VacancyCreated) {
+                  snackBarBuilder(SnackBarOptions(
+                    type: SnackBarType.success,
+                    title: 'Вакансия создана',
+                  ));
+                } else if (state is VacancyUpdated) {
+                  snackBarBuilder(SnackBarOptions(
+                    type: SnackBarType.success,
+                    title: 'Вакансия обновлена',
+                  ));
+                } else if (state is VacancyDeleted) {
+                  snackBarBuilder(SnackBarOptions(
+                    type: SnackBarType.success,
+                    title: 'Вакансия удалена',
+                  ));
+                }
+              },
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: isDesktop ? 1200 : isTablet ? 900 : double.infinity,
+                  ),
+                  child: Column(
+                    children: [
+                      _buildHeader(),
+                      _buildFilterTabs(),
+                      Expanded(
+                        child: BlocBuilder<VacancyBloc, VacancyState>(
+                          builder: (context, state) {
+                            if (state is VacancyLoading) {
+                              return const Center(child: CircularProgressIndicator());
+                            }
+                            if (state is VacancyError) {
+                              return Center(
+                                child: Text(
+                                  state.message,
+                                  style: AppTextStyles.body,
+                                ),
+                              );
+                            }
+                            if (state is VacanciesLoaded) {
+                              final list = _getFilteredVacancies(state.vacancies);
+                              return _buildVacanciesList(list, isDesktop, isTablet);
+                            }
+                            return const SizedBox();
+                          },
                         ),
-                      );
-                    }
-                    if (state is VacanciesLoaded) {
-                      final list = _getFilteredVacancies(state.vacancies);
-                      return _buildVacanciesList(list);
-                    }
-                    return const SizedBox();
-                  },
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
   }
   
-  Widget _buildVacanciesList(List<VacancyEntity> vacancies) {
+  Widget _buildVacanciesList(List<VacancyEntity> vacancies, bool isDesktop, bool isTablet) {
     if (vacancies.isEmpty) {
       return Center(
         child: Column(
@@ -115,15 +129,15 @@ class _VacanciesListPageState extends State<VacanciesListPage> {
           children: [
             Icon(
               Icons.work_outline,
-              size: 100,
+              size: isDesktop ? 120 : 100,
               color: AppColors.textSecondary,
             ),
-            SizedBox(height: 16.h),
+            const SizedBox(height: 16),
             Text(
               'Нет вакансий',
               style: AppTextStyles.h3,
             ),
-            SizedBox(height: 8.h),
+            const SizedBox(height: 8),
             Text(
               'Создайте первую вакансию',
               style: AppTextStyles.body.copyWith(
@@ -135,10 +149,32 @@ class _VacanciesListPageState extends State<VacanciesListPage> {
       );
     }
     
+    // Для десктопа используем сетку, для мобильных - список
+    if (isDesktop || isTablet) {
+      return GridView.builder(
+        padding: EdgeInsets.all(isDesktop ? AppPadding.medium * 2 : AppPadding.medium),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: isDesktop ? 2 : 1,
+          crossAxisSpacing: 16,
+          mainAxisSpacing: 16,
+          childAspectRatio: isDesktop ? 2.5 : 3,
+        ),
+        itemCount: vacancies.length,
+        itemBuilder: (context, index) {
+          return VacancyCard(
+            vacancy: vacancies[index],
+            onView: () => _onViewVacancy(vacancies[index]),
+            onEdit: () => _onEditVacancy(vacancies[index]),
+            onDelete: () => _onDeleteVacancy(vacancies[index]),
+          );
+        },
+      );
+    }
+    
     return ListView.separated(
       padding: EdgeInsets.all(AppPadding.medium),
       itemCount: vacancies.length,
-      separatorBuilder: (_, __) => SizedBox(height: 16.h),
+      separatorBuilder: (_, __) => const SizedBox(height: 16),
       itemBuilder: (context, index) {
         return VacancyCard(
           vacancy: vacancies[index],
@@ -208,12 +244,12 @@ class _VacanciesListPageState extends State<VacanciesListPage> {
     ];
 
     return Container(
-      height: 50.h,
+      height: 50,
       margin: EdgeInsets.symmetric(horizontal: AppPadding.medium),
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: filters.length,
-        separatorBuilder: (_, __) => SizedBox(width: 8.w),
+        separatorBuilder: (_, __) => const SizedBox(width: 8),
         itemBuilder: (context, index) {
           final filter = filters[index];
           final isSelected = _selectedFilter == filter['key'];
