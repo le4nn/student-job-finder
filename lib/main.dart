@@ -58,11 +58,81 @@ class MyApp extends StatelessWidget {
       child: MaterialApp.router(
         title: 'Student Job Finder',
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: AppColors.primary,
-            brightness: Brightness.light,
-          ),
           useMaterial3: true,
+          colorScheme: ColorScheme.light(
+            primary: AppColors.primary,
+            secondary: AppColors.secondary,
+            surface: AppColors.surface,
+            background: AppColors.background,
+            error: AppColors.error,
+            onPrimary: Colors.white,
+            onSecondary: AppColors.textPrimary,
+            onSurface: AppColors.textPrimary,
+            onBackground: AppColors.textPrimary,
+            onError: Colors.white,
+          ),
+          scaffoldBackgroundColor: AppColors.background,
+          fontFamily: 'SF Pro Display',
+          
+          // Card Theme - Rounded with subtle shadow
+          cardTheme: CardTheme(
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            color: AppColors.surface,
+            shadowColor: AppColors.shadow,
+          ),
+          
+          // Input Decoration Theme
+          inputDecorationTheme: InputDecorationTheme(
+            filled: true,
+            fillColor: AppColors.inputBackground,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: AppColors.border, width: 1),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: AppColors.borderLight, width: 1),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: AppColors.primary, width: 2),
+            ),
+            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          ),
+          
+          // Elevated Button Theme - Gradient purple to lilac
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              elevation: 0,
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            ),
+          ),
+          
+          // Text Button Theme
+          textButtonTheme: TextButtonThemeData(
+            style: TextButton.styleFrom(
+              foregroundColor: AppColors.primary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+          ),
+          
+          // App Bar Theme
+          appBarTheme: AppBarTheme(
+            elevation: 0,
+            backgroundColor: AppColors.surface,
+            foregroundColor: AppColors.textPrimary,
+            centerTitle: true,
+          ),
         ),
         darkTheme: ThemeData(
           colorScheme: ColorScheme.fromSeed(
